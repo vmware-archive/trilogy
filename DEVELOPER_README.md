@@ -5,7 +5,6 @@
 
 When creating a release, the following steps should be followed:
 - Update `build.gradle.kts` with the version number
-- Update `README.md` with the version number
 - When committing those changes, tag the commit with the version number, and push the tag to repository
 - Build the JAR by running `./gradlew bootRepackage`
 - Upload the resulting JAR to Github release associated with the version tag

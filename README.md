@@ -1,12 +1,9 @@
-# Trilogy
+![Trilogy](./trilogy-green.png)
 
 Trilogy is a tool for testing server-side database logic. Test cases are represented by plain text files utilizing markdown format, which makes them easy to read and edit.
 ## Requirements
 - JRE 1.7 or later installed
 - JDBC driver for the database under test available on the classpath.
-
-##Latest version
-0.2
 
 ## Command-line options
 - Single test case run:
