@@ -14,11 +14,11 @@ class MarkdownTable(val table: String) {
     }
 
     private fun extractHeaders(header: String): List<String> {
-        return header.split("|").map { it.trim() }.filter { !it.equals("") }
+        return header.split("|").map(String::trim).filter { it != "" }
     }
 
     private fun extractValues(valueTable: String): List<List<String>> {
-        return valueTable.split("\n").map { it.split("|").map { it.trim() }.drop(1).dropLast(1) }
+        return valueTable.split("\n").map { it.split("|").map(String::trim).drop(1).dropLast(1) }
     }
 
 }
