@@ -41,6 +41,10 @@ val oracleTests = task<Test>("oracleTests") {
     exclude(oracleBootstrapClasses)
 }
 
+val postgresTests = task<Test>("postgresTests") {
+    include("io/pivotal/trilogy/live/postgres/**")
+}
+
 val test = tasks.getByName("test") as Test
 test.apply {
     exclude("io/pivotal/trilogy/live/**")
