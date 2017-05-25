@@ -32,7 +32,7 @@ class TrilogyControllerTests : Spek({
 
         val testProjectResult = controller.run(options)
 
-        expect(true) { testProjectResult.fatalFailure }
+        expect(true) { testProjectResult.unrecoverableFailure }
     }
 
     it("succeeds when the connection options are okay") {
@@ -41,6 +41,6 @@ class TrilogyControllerTests : Spek({
 
         val testProjectResult = controller.run(options)
 
-        expect(false) { testProjectResult.fatalFailure }
+        expect(false) { testProjectResult.unrecoverableFailure }
     }
 })

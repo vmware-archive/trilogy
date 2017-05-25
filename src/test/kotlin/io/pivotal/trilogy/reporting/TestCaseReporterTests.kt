@@ -86,7 +86,7 @@ class TestCaseReporterTests : Spek({
     describe("fatal failures") {
         it("should append the [STOP] message when a fatal failure is encountered") {
             val result = listOf(TestCaseResult("Odd travel", errorMessage = "Walnut combines greatly with chopped steak"))
-            val report = TestCaseReporter.generateReport(TestProjectResult(result, fatalFailure = true))
+            val report = TestCaseReporter.generateReport(TestProjectResult(result, unrecoverableFailure = true))
 
             report shouldContain "\n[STOP] Execution aborted - the database may be in an inconsistent state\n"
         }

@@ -18,7 +18,7 @@ open class TrilogyController {
         try {
             return testProjectRunner.run(testProject)
         } catch(e: UnrecoverableException) {
-            return TestProjectResult(emptyList(), failureMessage = e.localizedMessage, fatalFailure = true)
+            return TestProjectResult(emptyList(), failureMessage = e.localizedMessage, unrecoverableFailure = true)
         }
 
     }

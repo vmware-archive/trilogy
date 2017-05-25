@@ -6,7 +6,7 @@ import io.pivotal.trilogy.testproject.TestProjectResult
 
 object TestCaseReporter {
     fun generateReport(result: TestProjectResult): String {
-        if (result.didFail or result.fatalFailure)
+        if (result.hasFatalFailure or result.unrecoverableFailure)
             return listOf("[FAIL] ${result.failureMessage}", result.fatalFailureMessage, "FAILED").filterNotNull().joinToString("\n")
         return if (result.testCaseResults.all { it.didPass } and result.malformedTestCases.isEmpty()) reportSuccess(result) else reportFailure(result)
     }
@@ -35,7 +35,7 @@ object TestCaseReporter {
     private val TestResult.displayMessage: String get() = this.errorMessage!!.prependIndent("    ")
 
     private val TestProjectResult.fatalFailureMessage: String? get() {
-        return if (this.fatalFailure) getI18nMessage("fatalFailure") else null
+        return if (this.unrecoverableFailure) getI18nMessage("unrecoverableFailure") else null
     }
 
     private val TestCaseResult.testCaseFailure: String get() {

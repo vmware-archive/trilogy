@@ -7,6 +7,7 @@ data class TestProjectResult(
         val testCaseResults: List<TestCaseResult>,
         val malformedTestCases: List<MalformedTrilogyTestCase> = emptyList(),
         val failureMessage: String? = null,
-        val fatalFailure: Boolean = false) {
-    val didFail: Boolean get() = ! failureMessage.isNullOrBlank()
+        val unrecoverableFailure: Boolean = false) {
+    val hasFatalFailure: Boolean get() = ! failureMessage.isNullOrBlank()
+    val hasFailed: Boolean get() = testCaseResults.any { it.failed > 0 }
 }
