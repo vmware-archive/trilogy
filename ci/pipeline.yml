@@ -3,7 +3,7 @@ resources:
 - name: trilogy
   type: git
   source:
-    uri: https://github.com/PivotalSharedIreland/trilogy.git
+    uri: https://github.com/pivotal/trilogy.git
     branch: master
 
 jobs:
