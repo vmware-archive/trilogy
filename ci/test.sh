@@ -22,6 +22,9 @@ prepare_java_runtime() {
 setup_dependencies() {
   apt-get update
   apt-get install -y openjdk-7-jre-headless
+  wget https://github.com/progrium/basht/releases/download/v0.1.0/basht_0.1.0_Linux_x86_64.tgz
+  tar zvxf basht_0.1.0_Linux_x86_64.tgz
+  mv ./basht /usr/local/bin/
 }
 
 pushd ./trilogy
@@ -29,4 +32,5 @@ pushd ./trilogy
   boot_oracle
   prepare_java_runtime
   DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean testAll
+  basht ./ci/test/trilogy.bash
 popd
