@@ -21,7 +21,7 @@ prepare_java_runtime() {
 
 setup_dependencies() {
   apt-get update
-  apt-get install -y openjdk-7-jre-headless
+  apt-get install -y openjdk-7-jre-headless wget
   wget https://github.com/progrium/basht/releases/download/v0.1.0/basht_0.1.0_Linux_x86_64.tgz
   tar zvxf basht_0.1.0_Linux_x86_64.tgz
   mv ./basht /usr/local/bin/
