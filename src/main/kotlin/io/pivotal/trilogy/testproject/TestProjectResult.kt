@@ -9,5 +9,5 @@ data class TestProjectResult(
         val failureMessage: String? = null,
         val unrecoverableFailure: Boolean = false) {
     val hasFatalFailure: Boolean get() = ! failureMessage.isNullOrBlank()
-    val hasFailed: Boolean get() = testCaseResults.any { it.failed > 0 }
+    val hasTestFailures: Boolean get() = testCaseResults.any { it.failed > 0 }
 }

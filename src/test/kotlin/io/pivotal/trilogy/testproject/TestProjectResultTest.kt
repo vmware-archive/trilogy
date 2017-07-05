@@ -15,10 +15,10 @@ class TestProjectResultTest : Spek({
     }
 
     it("is not failed by default") {
-        expect(false) { TestProjectResult(emptyList()).hasFailed }
+        expect(false) { TestProjectResult(emptyList()).hasTestFailures }
     }
 
     it("has failed when at least one test is failed") {
-        expect(true) { TestProjectResult(listOf(TestCaseResult("", listOf(TestResult("", "ERROR"))))).hasFailed }
+        expect(true) { TestProjectResult(listOf(TestCaseResult("", listOf(TestResult("", "ERROR"))))).hasTestFailures }
     }
 })

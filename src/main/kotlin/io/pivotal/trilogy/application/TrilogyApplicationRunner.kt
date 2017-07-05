@@ -19,10 +19,11 @@ open class TrilogyApplicationRunner : ApplicationRunner {
         if (args != null) {
             try {
                 val applicationOptions = TrilogyApplicationOptionsParser.parse(args.sourceArgs)
-                val testResults = trilogyController.run(applicationOptions)
-                val output = TestCaseReporter.generateReport(testResults)
+                val projectResult = trilogyController.run(applicationOptions)
+                val output = TestCaseReporter.generateReport(projectResult)
                 System.out.println(output)
-                if (testResults.hasFailed or testResults.hasFatalFailure or testResults.malformedTestCases.isNotEmpty()) {
+
+                if (projectResult.hasTestFailures or projectResult.hasFatalFailure or projectResult.malformedTestCases.isNotEmpty()) {
                     suppressStacktrace = true
                     throw ApplicationRunFailed()
                 }

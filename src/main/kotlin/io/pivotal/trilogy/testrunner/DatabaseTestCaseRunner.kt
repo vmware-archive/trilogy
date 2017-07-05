@@ -53,11 +53,9 @@ class DatabaseTestCaseRunner(val testSubjectCaller: TestSubjectCaller,
     private fun ProcedureTrilogyTest.runTestReturningError(testCase: ProcedureTrilogyTestCase, library: FixtureLibrary): String? {
         val outputValidator = OutputArgumentValidator(argumentTable.outputArgumentNames)
 
-        return argumentTable.inputArgumentValues.withIndex().map { inputRowWithIndex ->
+        return argumentTable.inputArgumentValues.withIndex().map { (index, inputRow) ->
 
             testCase.hooks.beforeEachRow.runSetupScripts(library)
-            val inputRow = inputRowWithIndex.value
-            val index = inputRowWithIndex.index
 
             val output = try {
                 testSubjectCaller.call(testCase.procedureName, argumentTable.inputArgumentNames, inputRow)
@@ -67,7 +65,7 @@ class DatabaseTestCaseRunner(val testSubjectCaller: TestSubjectCaller,
                 failureWithException(e)
             }
 
-            val currentRow = inputRowWithIndex.index + 1
+            val currentRow = index + 1
             val rowCount = argumentTable.inputArgumentValues.count()
 
             val callError = output["=FAIL="].rowCallError(currentRow, rowCount)
