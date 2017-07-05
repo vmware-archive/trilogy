@@ -23,7 +23,7 @@ open class TrilogyApplicationRunner : ApplicationRunner {
                 val output = TestCaseReporter.generateReport(projectResult)
                 System.out.println(output)
 
-                if (projectResult.hasTestFailures or projectResult.hasFatalFailure or projectResult.malformedTestCases.isNotEmpty()) {
+                if (projectResult.hasFailed) {
                     suppressStacktrace = true
                     throw ApplicationRunFailed()
                 }

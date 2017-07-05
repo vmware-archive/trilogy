@@ -70,3 +70,10 @@ run_test_case() {
   [[ "${status}" -eq 1 ]]
   [[ "${output}" =~ "Unable to connect to the database:" ]]
 }
+
+@test "missing fixtures" {
+  run run_project missing_fixtures
+  [[ "${status}" -eq 1 ]]
+  [[ "${output}" =~ "Unable to find fixture 'Setup non-existing client'" ]]
+}
+

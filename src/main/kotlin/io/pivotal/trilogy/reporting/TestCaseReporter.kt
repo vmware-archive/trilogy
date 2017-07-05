@@ -8,7 +8,7 @@ object TestCaseReporter {
     fun generateReport(result: TestProjectResult): String {
         if (result.hasFatalFailure or result.unrecoverableFailure)
             return listOf("[FAIL] ${result.failureMessage}", result.fatalFailureMessage, "FAILED").filterNotNull().joinToString("\n")
-        return if (result.testCaseResults.all { it.didPass } and result.malformedTestCases.isEmpty()) reportSuccess(result) else reportFailure(result)
+        return if (result.hasFailed) reportFailure(result) else reportSuccess(result)
     }
 
     private fun reportFailure(result: TestProjectResult): String {
