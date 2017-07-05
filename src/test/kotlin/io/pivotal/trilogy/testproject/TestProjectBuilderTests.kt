@@ -9,7 +9,7 @@ import io.pivotal.trilogy.test_helpers.shouldStartWith
 import io.pivotal.trilogy.test_helpers.shouldThrow
 import io.pivotal.trilogy.testcase.GenericTrilogyTestCase
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
-import io.pivotal.trilogy.testcase.TestCaseHooks
+import io.pivotal.trilogy.testcase.TestFixtures
 import org.amshove.kluent.AnyException
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
@@ -103,7 +103,7 @@ class TestProjectBuilderTests : Spek({
         (project.testCases.first() as ProcedureTrilogyTestCase).apply {
             procedureName shouldEqual "EXAMPLE_PROCEDURE"
             description shouldEqual "Example"
-            hooks shouldEqual TestCaseHooks(emptyList(), emptyList(), emptyList(), emptyList())
+            hooks shouldEqual TestFixtures(emptyList(), emptyList(), emptyList(), emptyList())
             tests.count() shouldEqual 2
             tests.first().apply {
                 description shouldEqual "Output should echo the input"

@@ -1,6 +1,6 @@
 package io.pivotal.trilogy.testcase
 
-data class TestCaseHooks(
+data class TestFixtures(
         val beforeAll: List<String> = emptyList(),
         val beforeEachTest: List<String> = emptyList(),
         val beforeEachRow: List<String> = emptyList(),

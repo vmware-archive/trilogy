@@ -1,6 +1,5 @@
 package io.pivotal.trilogy.parsing
 
-import io.pivotal.trilogy.i18n.MessageCreator
 import io.pivotal.trilogy.i18n.MessageCreator.getI18nMessage
 import io.pivotal.trilogy.parsing.exceptions.test.BaseParseException
 import io.pivotal.trilogy.parsing.exceptions.testcase.InvalidFormat
@@ -8,7 +7,7 @@ import io.pivotal.trilogy.parsing.exceptions.testcase.TypeMismatch
 import io.pivotal.trilogy.testcase.MalformedTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
-import io.pivotal.trilogy.testcase.TestCaseHooks
+import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyTestCase
 
 class ProcedureStringTestCaseParser(testCaseBody: String) : BaseStringTestCaseParser(testCaseBody) {
@@ -42,8 +41,8 @@ class ProcedureStringTestCaseParser(testCaseBody: String) : BaseStringTestCasePa
         return functionName
     }
 
-    private fun parseHooks(): TestCaseHooks {
-        return TestCaseHooks(
+    private fun parseHooks(): TestFixtures {
+        return TestFixtures(
                 beforeAll = parseHookSection("BEFORE ALL"),
                 beforeEachTest = parseHookSection("BEFORE EACH TEST"),
                 afterAll = parseHookSection("AFTER ALL"),
