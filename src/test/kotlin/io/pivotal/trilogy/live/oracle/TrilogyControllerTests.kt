@@ -103,8 +103,8 @@ class TrilogyControllerTests : Spek({
 
                     val testCaseResult = result.testCaseResults
                     expect(false) { testCaseResult.all { it.didPass } }
-                    expect(1) { testCaseResult.fold(0) { acc, result -> acc + result.passed } }
-                    expect(3) { testCaseResult.fold(0) { acc, result -> acc + result.failed } }
+                    expect(1) { testCaseResult.fold(0) { acc, test -> acc + test.passed } }
+                    expect(3) { testCaseResult.fold(0) { acc, test -> acc + test.failed } }
                 }
 
             }
