@@ -3,8 +3,10 @@ package io.pivotal.trilogy.testproject
 import io.pivotal.trilogy.test_helpers.ResourceHelper
 import io.pivotal.trilogy.test_helpers.shouldStartWith
 import io.pivotal.trilogy.test_helpers.shouldThrow
+import io.pivotal.trilogy.testcase.TestCaseNotFound
 import org.amshove.kluent.AnyException
 import org.jetbrains.spek.api.Spek
+import java.net.URL
 import kotlin.test.expect
 
 class UrlTestCaseResourceLocatorTests : Spek({
@@ -20,6 +22,6 @@ class UrlTestCaseResourceLocatorTests : Spek({
     }
 
     it("crashes when the file does not exist") {
-        { UrlTestCaseResourceLocator(ResourceHelper.getResourceUrl("/testcases/degenerate_thing.stt")) } shouldThrow AnyException
+        { UrlTestCaseResourceLocator(URL("file:///foo/bar/baz.stt")) } shouldThrow TestCaseNotFound::class
     }
 })

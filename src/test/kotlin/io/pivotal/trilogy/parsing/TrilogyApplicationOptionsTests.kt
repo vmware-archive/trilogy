@@ -9,9 +9,10 @@ import kotlin.test.expect
 
 class TrilogyApplicationOptionsTests : Spek({
     it("should provide a project resource locator") {
-        val resourceLocator = TrilogyApplicationOptions(testProjectPath = "some_path").resourceLocator
+        val projectPath = "src/test/resources/projects/blank/"
+        val resourceLocator = TrilogyApplicationOptions(testProjectPath = projectPath).resourceLocator
         expect(true) { resourceLocator is UrlTestProjectResourceLocator }
-        expect(File("some_path").toURI().toURL()) { (resourceLocator as UrlTestProjectResourceLocator).projectUrl }
+        expect(File(projectPath).toURI().toURL()) { (resourceLocator as UrlTestProjectResourceLocator).projectUrl }
     }
 
     it("should provide a test case resource locator") {

@@ -1,6 +1,7 @@
 package io.pivotal.trilogy.parsing
 
 import io.pivotal.trilogy.application.TrilogyApplicationOptions
+import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
@@ -19,15 +20,26 @@ object TrilogyApplicationOptionsParser {
             throw e
         }
 
+        return trilogyApplicationOptions(command)
+    }
+
+    private fun trilogyApplicationOptions(command: CommandLine): TrilogyApplicationOptions {
         val applicationOptions = if (command.args.any())
-            TrilogyApplicationOptions(testCaseFilePath = command.args.first())
-        else {
-            val testProjectPath = command.getOptionValue("project") ?: ""
-            val shouldSkipSchema = command.hasOption("skip_schema_load")
-            TrilogyApplicationOptions(testProjectPath = testProjectPath, shouldSkipSchema = shouldSkipSchema)
-        }
+            testCaseApplicationOptions(command)
+        else
+            testProjectApplicationOptions(command)
 
         return applicationOptions
+    }
+
+    private fun testProjectApplicationOptions(command: CommandLine): TrilogyApplicationOptions {
+        val testProjectPath = command.getOptionValue("project") ?: ""
+        val shouldSkipSchema = command.hasOption("skip_schema_load")
+        return TrilogyApplicationOptions(testProjectPath = testProjectPath, shouldSkipSchema = shouldSkipSchema)
+    }
+
+    private fun testCaseApplicationOptions(command: CommandLine): TrilogyApplicationOptions {
+        return TrilogyApplicationOptions(testCaseFilePath = command.args.first())
     }
 
     private val String.isValidOption: Boolean get() {

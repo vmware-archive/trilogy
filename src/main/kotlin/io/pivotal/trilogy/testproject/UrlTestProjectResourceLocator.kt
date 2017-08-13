@@ -1,10 +1,16 @@
 package io.pivotal.trilogy.testproject
 
+import io.pivotal.trilogy.i18n.MessageCreator
 import java.io.File
 import java.io.FileFilter
 import java.net.URL
 
 class UrlTestProjectResourceLocator(val projectUrl: URL) : TestProjectResourceLocator {
+    init {
+        if (! File(projectUrl.path).isDirectory)
+            throw TestProjectNotFound(MessageCreator.getI18nMessage("testProjectRunner.errors.projectNotFound", listOf(projectUrl.path)))
+    }
+
     override val testsPresent: Boolean by lazy {
         testsDirectory.isDirectory && testsDirectory.listFiles(testFileFilter).any()
     }

@@ -2,8 +2,11 @@ package io.pivotal.trilogy.testproject
 
 import io.pivotal.trilogy.test_helpers.ResourceHelper
 import io.pivotal.trilogy.test_helpers.shouldStartWith
+import io.pivotal.trilogy.test_helpers.shouldThrow
+import org.amshove.kluent.AnyException
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
+import java.net.URL
 import kotlin.test.expect
 
 class UrlTestProjectResourceLocatorTests : Spek({
@@ -54,6 +57,14 @@ class UrlTestProjectResourceLocatorTests : Spek({
                 listPresenceTest(test.setupFixtureFilesPresenceTitle, test.setupFixturesPresent, subject.setupFixtures)
                 listPresenceTest(test.teardownFixtureFilesPresenceTitle, test.setupFixturesPresent, subject.teardownFixtures)
             }
+        }
+    }
+
+    context("invalid project URL") {
+        it("fails when the URL is pointing to a non-existing folder") {
+            val brokenUrl = URL("file:///points/nowhere/in/particular/");
+
+            { UrlTestProjectResourceLocator(brokenUrl) } shouldThrow TestProjectNotFound::class
         }
     }
 
