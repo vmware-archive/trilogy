@@ -3,7 +3,6 @@ package io.pivotal.trilogy.testproject
 import io.pivotal.trilogy.test_helpers.ResourceHelper
 import io.pivotal.trilogy.test_helpers.shouldStartWith
 import io.pivotal.trilogy.test_helpers.shouldThrow
-import org.amshove.kluent.AnyException
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import java.net.URL

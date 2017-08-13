@@ -3,6 +3,7 @@ package io.pivotal.trilogy.testproject
 import io.pivotal.trilogy.test_helpers.ResourceHelper
 import io.pivotal.trilogy.test_helpers.shouldStartWith
 import io.pivotal.trilogy.test_helpers.shouldThrow
+import io.pivotal.trilogy.testcase.InvalidTestCaseName
 import io.pivotal.trilogy.testcase.TestCaseNotFound
 import org.amshove.kluent.AnyException
 import org.jetbrains.spek.api.Spek
@@ -18,7 +19,7 @@ class UrlTestCaseResourceLocatorTests : Spek({
     }
 
     it("crashes when the supplied URL is not for a test case") {
-        { UrlTestCaseResourceLocator(ResourceHelper.getResourceUrl("/tables/completeTable.md")) } shouldThrow AnyException
+        { UrlTestCaseResourceLocator(ResourceHelper.getResourceUrl("/tables/completeTable.md")) } shouldThrow InvalidTestCaseName::class
     }
 
     it("crashes when the file does not exist") {
