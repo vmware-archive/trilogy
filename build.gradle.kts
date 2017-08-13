@@ -3,15 +3,18 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.script.lang.kotlin.*
 
 buildscript {
-    val kotlinVersion = "1.1.2-5"
+    val kotlinVersion = "1.1.3-2"
     extra["kotlinVersion"] = kotlinVersion
+
+    val springBootVersion = "1.5.6.RELEASE"
+    extra["springBootVersion"] = springBootVersion
 
     repositories {
         gradleScriptKotlin()
         mavenCentral()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE")
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
         classpath(kotlinModule("gradle-plugin", version = kotlinVersion))
     }
 }
@@ -64,12 +67,13 @@ configure<JavaPluginConvention> {
 }
 
 val kotlinVersion = extra["kotlinVersion"] as String
+val springBootVersion = extra["springBootVersion"] as String
 
 dependencies {
     compile(kotlinModule("stdlib", version = kotlinVersion))
     compile(kotlinModule("reflect", version = kotlinVersion))
     compile("org.springframework.boot:spring-boot-starter-jdbc")
-    compile("org.springframework.boot:spring-boot-starter:1.5.1.RELEASE")
+    compile("org.springframework.boot:spring-boot-starter:$springBootVersion")
     compile("commons-cli:commons-cli:1.3.1")
     compile("org.flywaydb:flyway-core:4.0.3")
 
