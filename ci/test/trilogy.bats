@@ -31,49 +31,68 @@ run_test_case() {
 
 @test "a test fails" {
   run run_project errors
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "[FAIL] Testable errors - Wrong error specified" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "[FAIL] Testable errors - Wrong error specified" ]]
 }
 
 @test "an assertion fails" {
   run run_test_case should_fail_with_sql
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "Assertion failure: Assertion description" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "Assertion failure: Assertion description" ]]
 }
 
 @test "a parsing error" {
   run run_project broken_test_cases
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "the first line of a test case should start with \`# TEST CASE\`" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "the first line of a test case should start with \`# TEST CASE\`" ]]
 }
 
 @test "broken schema" {
   run run_project broken_schema
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "[FAIL] Unable to load schema:" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "[FAIL] Unable to load schema:" ]]
 }
 
 @test "broken SQL source" {
   run run_project broken_source
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "[FAIL] Unable to load script " ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "[FAIL] Unable to load script " ]]
 }
 
 @test "non-existing procedure" {
   run run_test_case non_existing_procedure_name
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "Unable to determine the correct call signature - no procedure/function/signature for 'AHOY'" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "Unable to determine the correct call signature - no procedure/function/signature for 'AHOY'" ]]
 }
 
 @test "database connection failure" {
   DB_USER=r4nd0m_stuff run run_project mixed_complete
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "Unable to connect to the database:" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "Unable to connect to the database:" ]]
 }
 
 @test "missing fixtures" {
   run run_project missing_fixtures
-  [[ "${status}" -eq 1 ]]
-  [[ "${output}" =~ "Unable to find fixture 'Setup non-existing client'" ]]
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "Unable to find fixture 'Setup non-existing client'" ]]
 }
 
+@test "non-existing project" {
+  run run_project "s43lk5jlk5j"
+  [[ "$status" -eq 1 ]]
+  echo "$output"
+  [[ "$output" =~ "[FAIL] Nothing to run. Unable to find the test project folder " ]]
+}
+
+@test "non-existing test case" {
+  run run_test_case foos_behind_bars
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "[FAIL] Nothing to run. No such file " ]]
+}
+
+@test "wrong file for a test case" {
+  run java -jar "$(trilogy)" "$(repo)/src/test/resources/tables/completeTable.md"
+  [[ "$status" -eq 1 ]]
+  echo "$output"
+  [[ "$output" =~ "[FAIL] Invalid test case filename" ]]
+}

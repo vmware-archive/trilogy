@@ -1,5 +1,5 @@
 package io.pivotal.trilogy.testcase
 
-import io.pivotal.trilogy.testrunner.UnrecoverableException
+import io.pivotal.trilogy.testproject.TestBuildException
 
-class TestCaseNotFound(message: String, cause: Throwable = RuntimeException()): UnrecoverableException(message, cause)
+class TestCaseNotFound(message: String): TestBuildException(message)
