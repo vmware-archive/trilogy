@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.script.lang.kotlin.*
 
 buildscript {
-    val kotlinVersion = "1.1.3-2"
+    val kotlinVersion = "1.1.4"
     extra["kotlinVersion"] = kotlinVersion
 
     val springBootVersion = "1.5.6.RELEASE"
