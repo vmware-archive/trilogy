@@ -150,21 +150,27 @@ class UrlTestProjectResourceLocatorTests : Spek({
 
             it("should only include internal hierarchy as the fixture name") {
                 val subject = UrlTestProjectResourceLocator(ResourceHelper.getResourceUrl("/projects/nested/"))
-                listOf(
+                val actualSetupFixtureNames = subject.setupFixtures.map { it.name }
+                val actualTeardownFixtureNames = subject.teardownFixtures.map { it.name }
+
+                val expectedSetupFixtureNames = listOf(
                         "bar/set_client_balance",
                         "bar/setup_client",
                         "set_client_balance",
                         "setup_client",
                         "setup_message_log"
-                ).forEachIndexed { i, name -> subject.setupFixtures[i].name shouldEqual name }
+                )
 
-                listOf(
+                val expectedTeardownFixtureNames = listOf(
                         "foo/remove_clients",
                         "foo/remove_transactions",
                         "remove_clients",
                         "remove_some_transactions",
                         "remove_transactions"
-                ).forEachIndexed { i, name -> subject.teardownFixtures[i].name shouldEqual name }
+                )
+
+                expect(emptyList()) { actualSetupFixtureNames - expectedSetupFixtureNames }
+                expect(emptyList()) { actualTeardownFixtureNames - expectedTeardownFixtureNames }
             }
         }
     }

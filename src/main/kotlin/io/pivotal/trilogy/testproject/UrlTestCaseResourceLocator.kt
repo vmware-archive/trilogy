@@ -12,7 +12,7 @@ class UrlTestCaseResourceLocator(url: URL) : TestProjectResourceLocator {
 
         if (url.isInvalid) throw InvalidTestCaseName(MessageCreator.getI18nMessage("testCaseRunner.errors.invalidTestCaseName", listOf(url.path)))
     }
-    override val testCases = listOf(TestCaseResource(url.path ,url.textContent))
+    override val testCases = listOf(TestCaseResource(url.path ,url.textContent)).sortedBy { it.path }
 
     private val URL.isInvalid: Boolean get() = !isValid
     private val URL.isValid: Boolean get() = file.toLowerCase().endsWith(".stt")

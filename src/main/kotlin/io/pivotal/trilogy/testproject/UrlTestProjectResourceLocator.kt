@@ -20,11 +20,11 @@ class UrlTestProjectResourceLocator(val projectUrl: URL) : TestProjectResourceLo
     }
 
     override val testCases: List<TestCaseResource> by lazy {
-        testCaseFiles.map { testCaseFile -> TestCaseResource(testCaseFile.path, testCaseFile.readText()) }
+        testCaseFiles.sortedBy { it.absolutePath }.map { testCaseFile -> TestCaseResource(testCaseFile.path, testCaseFile.readText()) }
     }
 
     override val sourceScripts: List<ProjectSourceScript> by lazy {
-        sourceFiles.map { sourceFile -> ProjectSourceScript(name = sourceFile.absolutePath, content = sourceFile.readText()) }
+        sourceFiles.sortedBy { it.absolutePath }.map { sourceFile -> ProjectSourceScript(name = sourceFile.absolutePath, content = sourceFile.readText()) }
     }
 
     override val setupFixtures: List<NamedStringResource> by lazy {
