@@ -1,36 +1,34 @@
-import org.gradle.api.plugins.*
-import org.gradle.api.tasks.testing.Test
-import org.gradle.script.lang.kotlin.*
 
 buildscript {
-    val kotlinVersion = "1.1.4"
+    val kotlinVersion = "1.1.60"
     extra["kotlinVersion"] = kotlinVersion
 
     val springBootVersion = "1.5.6.RELEASE"
     extra["springBootVersion"] = springBootVersion
 
     repositories {
-        gradleScriptKotlin()
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion")
-        classpath(kotlinModule("gradle-plugin", version = kotlinVersion))
+        classpath(kotlin("gradle-plugin", version = kotlinVersion))
     }
 }
 
 apply {
     plugin("kotlin")
     plugin("org.springframework.boot")
-    plugin<ApplicationPlugin>()
 }
 
-configure<ApplicationPluginConvention> {
+plugins {
+    application
+}
+
+application {
     mainClassName = "io.pivotal.trilogy.application.TrilogyApplication"
 }
 
 repositories {
-    gradleScriptKotlin()
     jcenter()
     maven { setUrl("http://repository.jetbrains.com/all/") }
 }
@@ -70,8 +68,8 @@ val kotlinVersion = extra["kotlinVersion"] as String
 val springBootVersion = extra["springBootVersion"] as String
 
 dependencies {
-    compile(kotlinModule("stdlib", version = kotlinVersion))
-    compile(kotlinModule("reflect", version = kotlinVersion))
+    compile(kotlin("stdlib", version = kotlinVersion))
+    compile(kotlin("reflect", version = kotlinVersion))
     compile("org.springframework.boot:spring-boot-starter-jdbc")
     compile("org.springframework.boot:spring-boot-starter:$springBootVersion")
     compile("commons-cli:commons-cli:1.3.1")
