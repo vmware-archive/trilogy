@@ -36,16 +36,19 @@ repositories {
 
 val oracleBootstrapClasses = "io/pivotal/trilogy/live/oracle/bootstrap/**"
 val oracleBootstrap = task<Test>("oracleBootstrap") {
+    description = "Create common testing objects in an Oracle database"
     include(oracleBootstrapClasses)
 }
 
 val oracleTests = task<Test>("oracleTests") {
+    description = "End to end tests against an Oracle database"
     dependsOn(oracleBootstrap)
     include("io/pivotal/trilogy/live/oracle/**")
     exclude(oracleBootstrapClasses)
 }
 
 val postgresTests = task<Test>("postgresTests") {
+    description = "End to end tests against a Postgres database"
     include("io/pivotal/trilogy/live/postgres/**")
 }
 
@@ -55,6 +58,7 @@ test.apply {
 }
 
 task<Test>("testAll") {
+    description = "Run all unit and Oracle end to end tests"
     dependsOn(oracleTests, test)
 }
 
