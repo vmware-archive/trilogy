@@ -13,9 +13,9 @@ import io.pivotal.trilogy.testcase.TrilogyTestCase
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import io.pivotal.trilogy.validators.OutputArgumentValidator
 
-class DatabaseTestCaseRunner(val testSubjectCaller: TestSubjectCaller,
-                             val assertionExecuter: AssertionExecuter,
-                             val scriptExecuter: ScriptExecuter) : TestCaseRunner {
+class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
+                             private val assertionExecuter: AssertionExecuter,
+                             private val scriptExecuter: ScriptExecuter) : TestCaseRunner {
 
     override fun run(trilogyTestCase: TrilogyTestCase, library: FixtureLibrary): TestCaseResult {
         val missingFixtures = trilogyTestCase.hooks.findMissingFixtures(library)
