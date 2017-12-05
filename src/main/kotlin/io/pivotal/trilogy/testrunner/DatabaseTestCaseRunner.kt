@@ -3,8 +3,8 @@ package io.pivotal.trilogy.testrunner
 import io.pivotal.trilogy.i18n.MessageCreator.getI18nMessage
 import io.pivotal.trilogy.reporting.TestCaseResult
 import io.pivotal.trilogy.reporting.TestResult
-import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.GenericTrilogyTest
+import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
 import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
@@ -12,6 +12,7 @@ import io.pivotal.trilogy.testcase.TrilogyTest
 import io.pivotal.trilogy.testcase.TrilogyTestCase
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import io.pivotal.trilogy.validators.OutputArgumentValidator
+import org.springframework.dao.InvalidDataAccessApiUsageException
 
 class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
                              private val assertionExecuter: AssertionExecuter,
@@ -26,15 +27,26 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
 
         trilogyTestCase.hooks.beforeAll.runSetupScripts(library)
 
-        val testResults = trilogyTestCase.tests.map { test ->
-            trilogyTestCase.hooks.beforeEachTest.runSetupScripts(library)
-            val testResult = test.tryProceduralTest(library, trilogyTestCase) ?: test.tryGenericTest() ?: TestResult(test.description, "Unknown test type")
-            trilogyTestCase.hooks.afterEachTest.runTeardownScripts(library)
-            testResult
-        } + trilogyTestCase.malformedTests.map { (description, errorMessage) -> TestResult(description, errorMessage) }
+        val testResults: List<TestResult>
+        try {
+            testResults = trilogyTestCase.runTests(library)
+        } catch (e: InvalidDataAccessApiUsageException) {
+            val errorMessage = if (trilogyTestCase is ProcedureTrilogyTestCase) "the specified procedure, ${trilogyTestCase.procedureName} does not exist" else e.message
+            return TestCaseResult(trilogyTestCase.description, errorMessage = errorMessage)
+        }
+
         trilogyTestCase.hooks.afterAll.runTeardownScripts(library)
 
         return TestCaseResult(trilogyTestCase.description, testResults)
+    }
+
+    private fun TrilogyTestCase.runTests(library: FixtureLibrary): List<TestResult> {
+        return this.tests.map { test ->
+            this.hooks.beforeEachTest.runSetupScripts(library)
+            val testResult = test.tryProceduralTest(library, this) ?: test.tryGenericTest() ?: TestResult(test.description, "Unknown test type")
+            this.hooks.afterEachTest.runTeardownScripts(library)
+            testResult
+        } + this.malformedTests.map { (description, errorMessage) -> TestResult(description, errorMessage) }
     }
 
     private fun getAssertionError(assertions: List<TrilogyAssertion>): String? {

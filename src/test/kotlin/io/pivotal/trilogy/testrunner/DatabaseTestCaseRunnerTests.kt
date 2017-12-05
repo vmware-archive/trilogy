@@ -19,6 +19,7 @@ import io.pivotal.trilogy.testproject.FixtureLibrary
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
+import org.springframework.dao.InvalidDataAccessApiUsageException
 import kotlin.test.expect
 
 class DatabaseTestCaseRunnerTests : Spek({
@@ -655,7 +656,20 @@ class DatabaseTestCaseRunnerTests : Spek({
             }
         }
 
-        
+        context("when the stored procedure does not exist") {
+            val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", Fixtures.buildSingleTest(), testCaseHooks)
+            beforeEach { testSubjectCallerStub.exceptionToThrow = InvalidDataAccessApiUsageException("Toss the chickpeas with slobbery rum, vegemite, garlic, and black cardamon making sure to cover all of it.", RuntimeException("boom!")) }
+
+            it("should fail to run the test case") {
+                expect(false) { testCaseRunner.run(testCase, fixtureLibrary).didPass }
+            }
+
+            it("should include the error message in the test case result") {
+                testCaseRunner.run(testCase, fixtureLibrary).errorMessage!! shouldContain "the specified procedure, someProcedure does not exist"
+            }
+        }
+
+
 
         context("when a malformed test is present") {
             val testCase = ProcedureTrilogyTestCase("someProcedure", "some description",
