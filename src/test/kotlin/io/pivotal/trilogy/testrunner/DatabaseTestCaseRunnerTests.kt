@@ -10,11 +10,11 @@ import io.pivotal.trilogy.test_helpers.shouldThrow
 import io.pivotal.trilogy.testcase.GenericTrilogyTest
 import io.pivotal.trilogy.testcase.GenericTrilogyTestCase
 import io.pivotal.trilogy.testcase.MalformedTrilogyTest
+import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
 import io.pivotal.trilogy.testcase.TestArgumentTable
 import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
-import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.shouldEqual
@@ -110,7 +110,7 @@ class DatabaseTestCaseRunnerTests : Spek({
             expect(1) { result.failed }
         }
 
-        it("includes the error message int the test report") {
+        it("includes the error message in the test report") {
             val testCase = GenericTrilogyTestCase("Why does the ship yell?..", listOf(GenericTrilogyTest("Caniss ire!", "oops!", emptyList())), TestFixtures())
             scriptExecuterMock.shouldFailExecution = true
             val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -632,22 +632,30 @@ class DatabaseTestCaseRunnerTests : Spek({
             }
         }
 
-        context("when an error is thrown during execution") {
-            val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", Fixtures.buildSingleTest(), testCaseHooks)
-            beforeEach { testSubjectCallerStub.exceptionToThrow = InputArgumentException("boo", RuntimeException("boom!")) }
+        val exceptionList =
+                mapOf(Pair("unexpected argument", UnexpectedArgumentException("Bravely control a sonic shower.", RuntimeException("boom!"))),
+                        Pair("input argument", InputArgumentException("With white breads drink mayonnaise.", RuntimeException("boom!"))))
+        exceptionList.forEach { description, exception ->
+            context(description) {
 
-            it("should fail to run the test case") {
-                expect(false) { testCaseRunner.run(testCase, fixtureLibrary).didPass }
-            }
+                val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", Fixtures.buildSingleTest(), testCaseHooks)
+                beforeEach { testSubjectCallerStub.exceptionToThrow = exception }
 
-            it("should include the error message in the test case result") {
-                testCaseRunner.run(testCase, fixtureLibrary).failedTests.first().errorMessage!! shouldContain "boo"
-            }
+                it("should fail to run the test case") {
+                    expect(false) { testCaseRunner.run(testCase, fixtureLibrary).didPass }
+                }
 
-            it("should include the table row number, and total number of rows in the error message") {
-                testCaseRunner.run(testCase, fixtureLibrary).failedTests.first().errorMessage!! shouldContain "Row 1 of 1: "
+                it("should include the error message in the test case result") {
+                    testCaseRunner.run(testCase, fixtureLibrary).failedTests.first().errorMessage!! shouldContain exception.message!!
+                }
+
+                it("should include the table row number, and total number of rows in the error message") {
+                    testCaseRunner.run(testCase, fixtureLibrary).failedTests.first().errorMessage!! shouldContain "Row 1 of 1: "
+                }
             }
         }
+
+        
 
         context("when a malformed test is present") {
             val testCase = ProcedureTrilogyTestCase("someProcedure", "some description",
