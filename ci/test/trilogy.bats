@@ -62,7 +62,7 @@ run_test_case() {
 @test "non-existing procedure" {
   run run_test_case non_existing_procedure_name
   [[ "$status" -eq 1 ]]
-  [[ "$output" =~ "Unable to determine the correct call signature - no procedure/function/signature for 'AHOY'" ]]
+  [[ "$output" =~ "the specified procedure, AHOY does not exist" ]]
 }
 
 @test "database connection failure" {
