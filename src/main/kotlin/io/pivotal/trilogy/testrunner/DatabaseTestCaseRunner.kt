@@ -21,7 +21,7 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
     override fun run(trilogyTestCase: TrilogyTestCase, library: FixtureLibrary): TestCaseResult {
         val missingFixtures = trilogyTestCase.hooks.findMissingFixtures(library)
         if (missingFixtures.isNotEmpty()) {
-            val errorMessage = missingFixtures.map { getI18nMessage("testCaseRunner.errors.missingFixture", listOf(it)) }.joinToString("\n")
+            val errorMessage = missingFixtures.joinToString("\n") { getI18nMessage("testCaseRunner.errors.missingFixture", listOf(it)) }
             return TestCaseResult(trilogyTestCase.description, errorMessage = errorMessage)
         }
 
@@ -31,7 +31,8 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
         try {
             testResults = trilogyTestCase.runTests(library)
         } catch (e: InvalidDataAccessApiUsageException) {
-            val errorMessage = if (trilogyTestCase is ProcedureTrilogyTestCase) "the specified procedure, ${trilogyTestCase.procedureName} does not exist" else e.message
+            val errorMessage = if (trilogyTestCase is ProcedureTrilogyTestCase)
+                getI18nMessage("testCaseRunner.errors.nonExistingStoredProcedure", listOf(trilogyTestCase.procedureName)) else e.message
             return TestCaseResult(trilogyTestCase.description, errorMessage = errorMessage)
         }
 
