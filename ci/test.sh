@@ -26,7 +26,7 @@ setup_dependencies() {
         && awk -F . -v OFS=. 'BEGIN{n=2}/^security\.provider/ {split($3, posAndEquals, "=");$3=n++"="posAndEquals[2];print;next} 1' /etc/java-7-openjdk/security/java.security > /tmp/java.security \
         && echo "security.provider.1=org.bouncycastle.jce.provider.BouncyCastleProvider" >> /tmp/java.security \
         && mv /tmp/java.security /etc/java-7-openjdk/security/java.security
-  apt-get remove -y openjdk-jre-headless
+  apt-get remove -y openjdk-7-jre-headless
   apt-get update
   add-apt-repository -y ppa:kalon33/gamesgiroll
   add-apt-repository -y ppa:openjdk-r/ppa
