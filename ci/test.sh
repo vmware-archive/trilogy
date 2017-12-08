@@ -12,7 +12,7 @@ boot_oracle() {
 }
 
 prepare_java_runtime() {
-  cp /u01/app/oracle-product/12.1.0/xe/jdk/lib/tools.jar /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/
+  cp /u01/app/oracle-product/12.1.0/xe/jdk/lib/tools.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/
   
   mkdir -p ./lib
   cp /u01/app/oracle-product/12.1.0/xe/jdbc/lib/ojdbc7.jar ./lib
@@ -23,16 +23,16 @@ setup_dependencies() {
   apt-get update
   apt-get install -y software-properties-common
   apt-get update
-  add-apt-repository -y ppa:kalon33/gamesgiroll
+#  add-apt-repository -y ppa:kalon33/gamesgiroll
   add-apt-repository -y ppa:openjdk-r/ppa
   apt-get update
-  apt-get install -y openjdk-8-jre-headless bats
+  apt-get install -y openjdk-7-jre-headless bats
 }
 
 pushd ./trilogy
   setup_dependencies
   boot_oracle
   prepare_java_runtime
-  DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean testAll
+  GRADLE_OPTS='-Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts' DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean testAll
   bats ./ci/test/trilogy.bats
 popd
