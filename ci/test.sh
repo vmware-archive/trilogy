@@ -21,18 +21,23 @@ prepare_java_runtime() {
 
 setup_dependencies() {
   apt-get update
-  apt-get install -y software-properties-common
+  apt-get install -y software-properties-common openjdk-7-jre-headless
+  ln -s /usr/share/java/bcprov.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext/bcprov.jar \
+        && awk -F . -v OFS=. 'BEGIN{n=2}/^security\.provider/ {split($3, posAndEquals, "=");$3=n++"="posAndEquals[2];print;next} 1' /etc/java-7-openjdk/security/java.security > /tmp/java.security \
+        && echo "security.provider.1=org.bouncycastle.jce.provider.BouncyCastleProvider" >> /tmp/java.security \
+        && mv /tmp/java.security /etc/java-7-openjdk/security/java.security
+  apt-get remove -y openjdk-jre-headless
   apt-get update
   add-apt-repository -y ppa:kalon33/gamesgiroll
-#  add-apt-repository -y ppa:openjdk-r/ppa
+  add-apt-repository -y ppa:openjdk-r/ppa
   apt-get update
-  apt-get install -y openjdk-7-jre-headless bats
+  apt-get install -y openjdk-8-jre-headless libbcprov-java bats
 }
 
 pushd ./trilogy
   setup_dependencies
   boot_oracle
   prepare_java_runtime
-  GRADLE_OPTS='-Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts' DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean testAll
+  DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean testAll
   bats ./ci/test/trilogy.bats
 popd
