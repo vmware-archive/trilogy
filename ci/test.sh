@@ -21,6 +21,11 @@ prepare_java_runtime() {
 
 setup_dependencies() {
   apt-get update
+  apt-get install -y software-properties-common
+  apt-get update
+  add-apt-repository ppa:kalon33/gamesgiroll
+  add-apt-repository ppa:openjdk-r/ppa
+  apt-get update
   apt-get install -y openjdk-8-jre-headless bats
 }
 
