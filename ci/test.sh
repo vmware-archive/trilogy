@@ -12,7 +12,7 @@ boot_oracle() {
 }
 
 prepare_java_runtime() {
-  cp /u01/app/oracle-product/12.1.0/xe/jdk/lib/tools.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/
+  cp /u01/app/oracle-product/12.1.0/xe/jdk/lib/tools.jar /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/
   
   mkdir -p ./lib
   cp /u01/app/oracle-product/12.1.0/xe/jdbc/lib/ojdbc7.jar ./lib
