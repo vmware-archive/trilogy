@@ -12,11 +12,11 @@ boot_oracle() {
 }
 
 prepare_java_runtime() {
-  cp /u01/app/oracle-product/12.1.0/xe/jdk/lib/tools.jar /usr/lib/jvm/java-7-openjdk-amd64/jre/lib/
+  cp /u01/app/oracle-product/12.1.0/xe/jdk/lib/tools.jar /usr/lib/jvm/java-8-openjdk-amd64/jre/lib/
   
   mkdir -p ./lib
   cp /u01/app/oracle-product/12.1.0/xe/jdbc/lib/ojdbc7.jar ./lib
-  perl -pi -e 's#(\s+)(testCompile\("org.springframework.boot:spring-boot-starter-test"\))#$1$2\n$1testRuntime(files("lib/ojdbc7.jar"))#' build.gradle.kts
+  perl -pi -e 's#(\s+)(testCompile\("org.springframework.boot:spring-boot-starter-test"\))#$1$2\n$1runtime(files("lib/ojdbc7.jar"))#' build.gradle.kts
 }
 
 setup_dependencies() {
@@ -34,11 +34,16 @@ setup_dependencies() {
   apt-get install -y openjdk-8-jre-headless libbcprov-java bats
 }
 
+export DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe
+export DB_USER=app_user
+export DB_PASSWORD=secret
+
 pushd ./trilogy
   setup_dependencies
   boot_oracle
   prepare_java_runtime
   ./gradlew clean test
-  DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean oracleTest
+  ./gradlew clean oracleTest
+  ./gradlew clean bootRepackage
   bats ./ci/test/trilogy.bats
 popd
