@@ -45,5 +45,5 @@ pushd ./trilogy
   ./gradlew clean test
   ./gradlew clean oracleTest
   ./gradlew clean bootRepackage
-  bats ./ci/test/trilogy.bats
+  TERM=dumb bats ./ci/test/trilogy.bats
 popd
