@@ -38,6 +38,7 @@ pushd ./trilogy
   setup_dependencies
   boot_oracle
   prepare_java_runtime
-  DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean testAll
+  ./gradlew clean test
+  DB_URL=jdbc:oracle:thin:@$(hostname -i):1521:xe ./gradlew clean oracleTest
   bats ./ci/test/trilogy.bats
 popd
