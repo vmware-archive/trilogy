@@ -12,6 +12,7 @@ import io.pivotal.trilogy.testcase.TrilogyTest
 import io.pivotal.trilogy.testcase.TrilogyTestCase
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import io.pivotal.trilogy.testrunner.exceptions.FixtureLoadException
+import io.pivotal.trilogy.testrunner.exceptions.MalformedDatabaseURLException
 import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
 import io.pivotal.trilogy.validators.OutputArgumentValidator
 import org.springframework.dao.InvalidDataAccessApiUsageException
@@ -59,7 +60,9 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
     private fun GenericTrilogyTest.runTestReturningError(): String? {
         try {
             scriptExecuter.execute(this.body)
-        } catch(e: RuntimeException) {
+        } catch (e: MalformedDatabaseURLException) {
+            throw e
+        } catch (e: RuntimeException) {
             return e.message ?: "Unknown error"
         }
         return getAssertionError(this.assertions)
@@ -98,7 +101,9 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
         this.forEach { name ->
             try {
                 scriptExecuter.execute(library.getSetupFixtureByName(name))
-            } catch(e: RuntimeException) {
+            } catch (e: MalformedDatabaseURLException) {
+                throw e
+            } catch (e: RuntimeException) {
                 val message = getI18nMessage("testCaseRunner.errors.fixtureRun",
                         listOf(name, getI18nMessage("vocabulary.fixtures.setup"), e.localizedMessage.prependIndent("    ")))
                 throw FixtureLoadException(message, e)
@@ -110,7 +115,7 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
         this.forEach { name ->
             try {
                 scriptExecuter.execute(library.getTeardownFixtureByName(name))
-            } catch(e: RuntimeException) {
+            } catch (e: RuntimeException) {
                 val message = getI18nMessage("testCaseRunner.errors.fixtureRun",
                         listOf(name, getI18nMessage("vocabulary.fixtures.teardown"), e.localizedMessage.prependIndent("    ")))
                 throw FixtureLoadException(message, e)
@@ -148,7 +153,7 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
             try {
                 library.getSetupFixtureByName(it)
                 null
-            } catch(e: NullPointerException) {
+            } catch (e: NullPointerException) {
                 it
             }
         }.filterNotNull()
@@ -159,7 +164,7 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
             try {
                 library.getTeardownFixtureByName(it)
                 null
-            } catch(e: NullPointerException) {
+            } catch (e: NullPointerException) {
                 it
             }
         }.filterNotNull()

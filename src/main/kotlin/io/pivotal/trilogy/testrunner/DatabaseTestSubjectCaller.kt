@@ -2,12 +2,17 @@ package io.pivotal.trilogy.testrunner
 
 import io.pivotal.trilogy.i18n.MessageCreator.getI18nMessage
 import io.pivotal.trilogy.testcase.TestArgumentTableTokens
+import io.pivotal.trilogy.testrunner.exceptions.MalformedDatabaseURLException
 import io.pivotal.trilogy.testrunner.exceptions.MissingArgumentException
 import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
+import org.springframework.dao.DataAccessResourceFailureException
 import org.springframework.dao.InvalidDataAccessApiUsageException
+import org.springframework.jdbc.CannotGetJdbcConnectionException
 import org.springframework.jdbc.core.simple.SimpleJdbcCall
+import org.springframework.jdbc.support.MetaDataAccessException
+import java.sql.SQLException
 import java.util.HashMap
 import javax.sql.DataSource
 
@@ -40,7 +45,7 @@ class DatabaseTestSubjectCaller(@Autowired val dataSource: DataSource) : TestSub
         return try {
             this.execute(parameters)
         } catch (e: InvalidDataAccessApiUsageException) {
-          throw MissingArgumentException(e.localizedMessage, e)
+            throw MissingArgumentException(e.localizedMessage, e)
         } catch (e: DataAccessException) {
             mapOf(Pair(TestArgumentTableTokens.errorColumnName, e.cause?.message ?: e.message))
         } catch (e: NumberFormatException) {
@@ -61,11 +66,26 @@ class DatabaseTestSubjectCaller(@Autowired val dataSource: DataSource) : TestSub
     private fun SimpleJdbcCall.validArguments(callParameters: Set<String>): Set<String> {
         this.withNamedBinding()
         this.useInParameterNames(*(callParameters.toTypedArray()))
-        this.compile()
-        val validArguments = Regex("\\W?(\\w+)\\s+=>").findAll(this.callString).map { it.groups[1]?.value }.filterNotNull().toSet()
-        return validArguments
+        try {
+            this.compile()
+        } catch (e: DataAccessResourceFailureException) {
+            val firstCause = e.cause
+            if (firstCause is MetaDataAccessException) {
+                val secondCause = firstCause.cause
+                if (secondCause is CannotGetJdbcConnectionException) {
+                    val thirdCause = secondCause.cause
+                    if (thirdCause is SQLException) {
+                        if (thirdCause.cause is ClassNotFoundException) {
+                            throw MalformedDatabaseURLException(thirdCause.localizedMessage, thirdCause)
+                        }
+                    }
+                }
+            }
+            throw e
+        }
+        return Regex("\\W?(\\w+)\\s+=>").findAll(callString).map { it.groups[1]?.value }.filterNotNull().toSet()
     }
 
-    val Map<String, String?>.dumpInput: String
-        get() = this.filterKeys { !it.endsWith("$") }.map { (k, v) -> "    $k => $v"  }.joinToString("\n")
+    private val Map<String, String?>.dumpInput: String
+        get() = this.filterKeys { !it.endsWith("$") }.map { (k, v) -> "    $k => $v" }.joinToString("\n")
 }

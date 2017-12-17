@@ -7,7 +7,7 @@ class ScriptExecuterMock : ScriptExecuter {
     val executeArgList = mutableListOf<String>()
     var shouldFailExecution = false
     var safeExecutions: Int? = null
-    var failureException = RuntimeException("SQL Script exception")
+    var failureException: Exception = RuntimeException("SQL Script exception")
 
 
     override fun execute(scriptBody: String) {

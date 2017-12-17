@@ -17,12 +17,14 @@ import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import io.pivotal.trilogy.testrunner.exceptions.FixtureLoadException
+import io.pivotal.trilogy.testrunner.exceptions.MalformedDatabaseURLException
 import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
 import io.pivotal.trilogy.testrunner.exceptions.UnrecoverableException
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek
 import org.springframework.dao.InvalidDataAccessApiUsageException
+import java.sql.SQLException
 import kotlin.test.expect
 
 class DatabaseTestCaseRunnerTests : Spek({
@@ -37,6 +39,7 @@ class DatabaseTestCaseRunnerTests : Spek({
             beforeEachTest = listOf("Update client messages"))
     val hooksWithBeforeEveryPossibleStep = TestFixtures(beforeAll = listOf("set client balance"),
             beforeEachTest = listOf("Update client messages"), beforeEachRow = listOf("Update client balance"))
+
     val hooksWithAfterEachRow = TestFixtures(afterEachRow = listOf("Clear client balance"))
     val hooksWithAfterEachTest = TestFixtures(afterEachTest = listOf("Nowhere"))
     val hooksWithAfterAll = TestFixtures(afterAll = listOf("Collision course"))
@@ -691,6 +694,67 @@ class DatabaseTestCaseRunnerTests : Spek({
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
                 expect("one") { result.failedTests.first().testName }
             }
+        }
+    }
+
+    context("driver initialization failure") {
+        val thrownException = MalformedDatabaseURLException(".", SQLException("!"))
+
+        it("bubbles up the exception during outer fixture load") {
+            val testCase = GenericTrilogyTestCase("", emptyList(), TestFixtures(beforeAll = listOf("set client balance")))
+            scriptExecuterMock.shouldFailExecution = true
+            scriptExecuterMock.failureException = thrownException
+
+            { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
+        }
+
+        it("bubbles up the exception during generic test fixture load") {
+            val testCase = GenericTrilogyTestCase("",
+                    listOf(GenericTrilogyTest("", "", emptyList())),
+                    TestFixtures(beforeEachTest = listOf("set client balance")))
+            scriptExecuterMock.shouldFailExecution = true
+            scriptExecuterMock.failureException = thrownException
+
+            { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
+        }
+
+        it("bubbles up the exception during procedural test fixture load") {
+            val testCase = ProcedureTrilogyTestCase("", "",
+                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
+                    TestFixtures(beforeEachTest = listOf("Update client messages")))
+            scriptExecuterMock.shouldFailExecution = true
+            scriptExecuterMock.failureException = thrownException
+
+            { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
+        }
+
+        it("bubbles up during row fixture load") {
+            val testCase = ProcedureTrilogyTestCase("", "",
+                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
+                    TestFixtures(beforeEachRow = listOf("Update client messages")))
+            scriptExecuterMock.shouldFailExecution = true
+            scriptExecuterMock.failureException = thrownException
+
+            { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
+        }
+
+        it("bubbles up during generic test run") {
+            val testCase = GenericTrilogyTestCase("",
+                    listOf(GenericTrilogyTest("neim", "statements", emptyList())),
+                    TestFixtures())
+            scriptExecuterMock.shouldFailExecution = true
+            scriptExecuterMock.failureException = thrownException
+
+            { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
+        }
+
+        it("bubbles up during procedural test run") {
+            val testCase = ProcedureTrilogyTestCase("", "",
+                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
+                    TestFixtures())
+            testSubjectCallerStub.exceptionToThrow = thrownException
+
+            { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
         }
     }
 })

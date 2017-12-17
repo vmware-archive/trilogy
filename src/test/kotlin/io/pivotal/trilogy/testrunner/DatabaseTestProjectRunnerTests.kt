@@ -5,6 +5,7 @@ import io.pivotal.trilogy.mocks.TestCaseRunnerMock
 import io.pivotal.trilogy.mocks.TrilogyApplicationOptionsStub
 import io.pivotal.trilogy.reporting.TestCaseResult
 import io.pivotal.trilogy.reporting.TestResult
+import io.pivotal.trilogy.test_helpers.shouldNotThrow
 import io.pivotal.trilogy.test_helpers.shouldStartWith
 import io.pivotal.trilogy.test_helpers.shouldThrow
 import io.pivotal.trilogy.test_helpers.timesRepeat
@@ -12,6 +13,7 @@ import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
 import io.pivotal.trilogy.testproject.TestProjectBuilder
 import io.pivotal.trilogy.testproject.TrilogyTestProject
 import io.pivotal.trilogy.testproject.UrlTestProjectResourceLocator
+import io.pivotal.trilogy.testrunner.exceptions.MalformedDatabaseURLException
 import io.pivotal.trilogy.testrunner.exceptions.SchemaLoadFailedException
 import io.pivotal.trilogy.testrunner.exceptions.SourceScriptLoadException
 import org.jetbrains.spek.api.Spek
@@ -41,6 +43,43 @@ class DatabaseTestProjectRunnerTests : Spek({
         }
         expect("Example") { mockTestCaseRunner.runArgument?.description }
         expect(2) { mockTestCaseRunner.runArgument?.tests?.count() }
+    }
+
+    describe("database driver failure") {
+        val project = projectNamed("mixed_complete")
+        val thrownException = MalformedDatabaseURLException("", SQLException("!"))
+
+        it("bubbles up during schema load") {
+            val mockTestCaseRunner = TestCaseRunnerMock()
+            val executer = ScriptExecuterMock()
+            executer.shouldFailExecution = true
+            executer.failureException = thrownException
+            val runner = DatabaseTestProjectRunner(mockTestCaseRunner, executer);
+
+            { runner.run(project) } shouldThrow MalformedDatabaseURLException::class
+            expect(0) { mockTestCaseRunner.runCount }
+        }
+
+        it("bubbles up during source script load") {
+            val mockTestCaseRunner = TestCaseRunnerMock()
+            val executer = ScriptExecuterMock()
+            executer.shouldFailAfter(1)
+            executer.failureException = thrownException
+            val runner = DatabaseTestProjectRunner(mockTestCaseRunner, executer);
+
+            { runner.run(project) } shouldThrow MalformedDatabaseURLException::class
+            expect(0) { mockTestCaseRunner.runCount }
+        }
+
+        it("bubbles up during test runs") {
+            val mockTestCaseRunner = TestCaseRunnerMock()
+            val executer = ScriptExecuterMock()
+            mockTestCaseRunner.failureException = thrownException
+            mockTestCaseRunner.shouldFailExecution = true
+            val runner = DatabaseTestProjectRunner(mockTestCaseRunner, executer);
+
+            { runner.run(project) } shouldThrow MalformedDatabaseURLException::class
+        }
     }
 
     describe("multiple test cases in a project") {
