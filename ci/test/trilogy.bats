@@ -112,3 +112,9 @@ run_test_case() {
   echo "$output"
   [[ "$output" =~ "[FAIL] Invalid test case filename" ]]
 }
+
+@test "unavailable driver in jdbc URL" {
+  DB_URL=jdbc:mysql://host1:33060/sakila run run_project setup_teardown
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "[FAIL] Unable to load the driver for URL jdbc:mysql://host1:33060/sakila. Please make sure the URL is correct, and the appropriate JDBC driver is installed." ]]
+}
