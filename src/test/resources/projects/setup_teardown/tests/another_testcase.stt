@@ -1,5 +1,5 @@
 # TEST CASE VALIDATE_BALANCE
-Example
+One more example
 ## BEFORE ALL
 - Setup client
 ## AFTER EACH TEST
@@ -7,7 +7,7 @@ Example
 ## AFTER ALL
 - Remove clients
 ## TEST
-The client balance should be invalid
+The client balance should still be valid
 ### DATA
 |V_CLIENT_ID|V_IS_VALID$|=ERROR=|
 |----------:|----------:|-------|
