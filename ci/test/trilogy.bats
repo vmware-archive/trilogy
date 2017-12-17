@@ -77,6 +77,22 @@ run_test_case() {
   [[ "$output" =~ "Unable to find fixture 'Setup non-existing client'" ]]
 }
 
+@test "broken fixtures" {
+  run run_project broken_fixtures
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "Unable to load the 'Setup client' setup fixture" ]]
+}
+
+@test "regular fixtures" {
+  run_project setup_teardown
+}
+
+@test "failing fixtures" {
+  run run_project setup_teardown_with_failure
+  [[ "$status" -eq 1 ]]
+  [[ "$output" =~ "[FAIL] One more example - The client balance should not be valid anymore" ]]
+}
+
 @test "non-existing project" {
   run run_project "s43lk5jlk5j"
   [[ "$status" -eq 1 ]]
