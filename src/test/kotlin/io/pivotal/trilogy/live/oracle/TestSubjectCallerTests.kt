@@ -8,8 +8,8 @@ import io.pivotal.trilogy.test_helpers.shouldStartWith
 import io.pivotal.trilogy.test_helpers.shouldThrow
 import io.pivotal.trilogy.testrunner.DatabaseTestSubjectCaller
 import io.pivotal.trilogy.testrunner.InputArgumentException
-import io.pivotal.trilogy.testrunner.MissingArgumentException
-import io.pivotal.trilogy.testrunner.UnexpectedArgumentException
+import io.pivotal.trilogy.testrunner.exceptions.MissingArgumentException
+import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
 import org.amshove.kluent.AnyException
 import org.amshove.kluent.`should equal`
 import org.jetbrains.spek.api.Spek

@@ -12,6 +12,8 @@ import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
 import io.pivotal.trilogy.testproject.TestProjectBuilder
 import io.pivotal.trilogy.testproject.TrilogyTestProject
 import io.pivotal.trilogy.testproject.UrlTestProjectResourceLocator
+import io.pivotal.trilogy.testrunner.exceptions.SchemaLoadFailedException
+import io.pivotal.trilogy.testrunner.exceptions.SourceScriptLoadException
 import org.jetbrains.spek.api.Spek
 import org.springframework.jdbc.BadSqlGrammarException
 import java.io.File

@@ -11,6 +11,8 @@ import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testcase.TrilogyTest
 import io.pivotal.trilogy.testcase.TrilogyTestCase
 import io.pivotal.trilogy.testproject.FixtureLibrary
+import io.pivotal.trilogy.testrunner.exceptions.FixtureLoadException
+import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
 import io.pivotal.trilogy.validators.OutputArgumentValidator
 import org.springframework.dao.InvalidDataAccessApiUsageException
 

@@ -16,6 +16,9 @@ import io.pivotal.trilogy.testcase.TestArgumentTable
 import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testproject.FixtureLibrary
+import io.pivotal.trilogy.testrunner.exceptions.FixtureLoadException
+import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
+import io.pivotal.trilogy.testrunner.exceptions.UnrecoverableException
 import org.amshove.kluent.`should contain`
 import org.amshove.kluent.shouldEqual
 import org.jetbrains.spek.api.Spek

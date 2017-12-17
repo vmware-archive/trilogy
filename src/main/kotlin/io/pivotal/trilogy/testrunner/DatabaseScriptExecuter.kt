@@ -1,6 +1,7 @@
 package io.pivotal.trilogy.testrunner
 
 import io.pivotal.trilogy.i18n.MessageCreator
+import io.pivotal.trilogy.testrunner.exceptions.UnrecoverableException
 import org.flywaydb.core.internal.dbsupport.DbSupportFactory
 import org.flywaydb.core.internal.dbsupport.SqlScript
 import org.springframework.jdbc.core.JdbcTemplate

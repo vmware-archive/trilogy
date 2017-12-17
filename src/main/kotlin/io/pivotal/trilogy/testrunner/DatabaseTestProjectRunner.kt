@@ -3,6 +3,9 @@ package io.pivotal.trilogy.testrunner
 import io.pivotal.trilogy.i18n.MessageCreator.getI18nMessage
 import io.pivotal.trilogy.testproject.TestProjectResult
 import io.pivotal.trilogy.testproject.TrilogyTestProject
+import io.pivotal.trilogy.testrunner.exceptions.SchemaLoadFailedException
+import io.pivotal.trilogy.testrunner.exceptions.SourceScriptLoadException
+import io.pivotal.trilogy.testrunner.exceptions.UnrecoverableException
 import org.springframework.jdbc.BadSqlGrammarException
 
 class DatabaseTestProjectRunner(val testCaseRunner: TestCaseRunner, val scriptExecuter: ScriptExecuter) : TestProjectRunner {

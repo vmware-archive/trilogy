@@ -2,6 +2,8 @@ package io.pivotal.trilogy.testrunner
 
 import io.pivotal.trilogy.i18n.MessageCreator.getI18nMessage
 import io.pivotal.trilogy.testcase.TestArgumentTableTokens
+import io.pivotal.trilogy.testrunner.exceptions.MissingArgumentException
+import io.pivotal.trilogy.testrunner.exceptions.UnexpectedArgumentException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.dao.InvalidDataAccessApiUsageException

@@ -4,7 +4,7 @@ import io.pivotal.trilogy.testproject.TestBuildException
 import io.pivotal.trilogy.testproject.TestProjectBuilder
 import io.pivotal.trilogy.testproject.TestProjectResult
 import io.pivotal.trilogy.testrunner.TestProjectRunner
-import io.pivotal.trilogy.testrunner.UnrecoverableException
+import io.pivotal.trilogy.testrunner.exceptions.UnrecoverableException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 
