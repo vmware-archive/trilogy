@@ -14,6 +14,7 @@ import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
 import io.pivotal.trilogy.testcase.TestArgumentTable
 import io.pivotal.trilogy.testcase.TestCaseFixtures
+import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import io.pivotal.trilogy.testrunner.exceptions.FixtureLoadException
@@ -85,7 +86,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("includes test names in the result") {
-            val tests = listOf(GenericTrilogyTest("Mashing the pork butts", "test body", emptyList()))
+            val tests = listOf(GenericTrilogyTest("Mashing the pork butts", "test body", emptyList(), TestFixtures()))
             val testCase = GenericTrilogyTestCase("", tests, TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
@@ -93,7 +94,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("evaluates the body of the test") {
-            val testCase = GenericTrilogyTestCase("foo", listOf(GenericTrilogyTest("", "O, jolly desolation!", emptyList())), TestCaseFixtures())
+            val testCase = GenericTrilogyTestCase("foo", listOf(GenericTrilogyTest("", "O, jolly desolation!", emptyList(), TestFixtures())), TestCaseFixtures())
             testCaseRunner.run(testCase, fixtureLibrary)
 
             expect(1) { scriptExecuterMock.executeCalls }
@@ -101,7 +102,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("reports a passing test") {
-            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList())), TestCaseFixtures())
+            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList(), TestFixtures())), TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
             expect(1) { result.passed }
@@ -109,7 +110,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("reports a failing test on the test failure") {
-            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList())), TestCaseFixtures())
+            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList(), TestFixtures())), TestCaseFixtures())
             scriptExecuterMock.shouldFailExecution = true
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
@@ -118,7 +119,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("includes the error message in the test report") {
-            val testCase = GenericTrilogyTestCase("Why does the ship yell?..", listOf(GenericTrilogyTest("Caniss ire!", "oops!", emptyList())), TestCaseFixtures())
+            val testCase = GenericTrilogyTestCase("Why does the ship yell?..", listOf(GenericTrilogyTest("Caniss ire!", "oops!", emptyList(), TestFixtures())), TestCaseFixtures())
             scriptExecuterMock.shouldFailExecution = true
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
@@ -126,7 +127,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("reports a failing test on the assertion failure") {
-            val testWithAssertions = GenericTrilogyTest("", "", listOf(TrilogyAssertion("", "")))
+            val testWithAssertions = GenericTrilogyTest("", "", listOf(TrilogyAssertion("", "")), TestFixtures())
             assertionExecuterMock.assertionExecutionErrorMessage = "an assertion failure"
             val testCase = GenericTrilogyTestCase("o", listOf(testWithAssertions), TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -136,7 +137,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("reports a passing test on successful assertion") {
-            val testWithAssertions = GenericTrilogyTest("", "", listOf(TrilogyAssertion("", "")))
+            val testWithAssertions = GenericTrilogyTest("", "", listOf(TrilogyAssertion("", "")), TestFixtures())
             val testCase = GenericTrilogyTestCase("o", listOf(testWithAssertions), TestCaseFixtures())
             assertionExecuterMock.assertionExecutionErrorMessage = null
             val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -297,7 +298,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         context("error handling") {
-            val tests = listOf(ProcedureTrilogyTest("some test", TestArgumentTable(emptyList(), emptyList()), emptyList()))
+            val tests = listOf(ProcedureTrilogyTest("some test", TestArgumentTable(emptyList(), emptyList()), emptyList(), TestFixtures()))
 
             it("fails when a non-existing 'before all' fixture is specified") {
                 val missingFixtureName = "I influence this beauty, it's called neutral vision."
@@ -409,8 +410,8 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             context("fixture load failure") {
                 val table = TestArgumentTable(listOf("FOO"), listOf(listOf("Bar")))
-                val proceduralTest = ProcedureTrilogyTest("Gummy stuff", table, emptyList())
-                val genericTest = GenericTrilogyTest("Fixture error test", "", emptyList())
+                val proceduralTest = ProcedureTrilogyTest("Gummy stuff", table, emptyList(), TestFixtures())
+                val genericTest = GenericTrilogyTest("Fixture error test", "", emptyList(), TestFixtures())
 
                 it("throws an exception when a 'before all' fixture load fails") {
                     scriptExecuterMock.shouldFailExecution = true
@@ -619,7 +620,7 @@ class DatabaseTestCaseRunnerTests : Spek({
             val argumentTable = TestArgumentTable(listOf("=ERROR="), listOf(listOf("ERROR")))
 
             it("should report an error when no error is thrown") {
-                val singleTest = ProcedureTrilogyTest("foo", argumentTable, emptyList())
+                val singleTest = ProcedureTrilogyTest("foo", argumentTable, emptyList(), TestFixtures())
                 testSubjectCallerStub.resultToReturn = emptyMap()
                 val expectedError = "Row 1 of 1: Expected an error with text 'ERROR' to occur, but no errors were triggered"
                 val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", listOf(singleTest), testCaseHooks)
@@ -631,7 +632,7 @@ class DatabaseTestCaseRunnerTests : Spek({
             val argumentTable = TestArgumentTable(listOf("=ERROR="), listOf(listOf("ANY")))
 
             it("should report when no error is thrown") {
-                val singleTest = ProcedureTrilogyTest("bar", argumentTable, emptyList())
+                val singleTest = ProcedureTrilogyTest("bar", argumentTable, emptyList(), TestFixtures())
                 testSubjectCallerStub.resultToReturn = emptyMap()
                 val expectedError = "Row 1 of 1: Expected any error to occur, but no errors were triggered"
                 val testCase = ProcedureTrilogyTestCase("someOtherProcedure", "d.e.s.c.r.i.p.t.i.o.n", listOf(singleTest), testCaseHooks)
@@ -710,7 +711,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("bubbles up the exception during generic test fixture load") {
             val testCase = GenericTrilogyTestCase("",
-                    listOf(GenericTrilogyTest("", "", emptyList())),
+                    listOf(GenericTrilogyTest("", "", emptyList(), TestFixtures())),
                     TestCaseFixtures(beforeEachTest = listOf("set client balance")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
@@ -720,7 +721,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("bubbles up the exception during procedural test fixture load") {
             val testCase = ProcedureTrilogyTestCase("", "",
-                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
+                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList(), TestFixtures())),
                     TestCaseFixtures(beforeEachTest = listOf("Update client messages")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
@@ -730,7 +731,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("bubbles up during row fixture load") {
             val testCase = ProcedureTrilogyTestCase("", "",
-                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
+                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList(), TestFixtures())),
                     TestCaseFixtures(beforeEachRow = listOf("Update client messages")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
@@ -740,7 +741,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("bubbles up during generic test run") {
             val testCase = GenericTrilogyTestCase("",
-                    listOf(GenericTrilogyTest("neim", "statements", emptyList())),
+                    listOf(GenericTrilogyTest("neim", "statements", emptyList(), TestFixtures())),
                     TestCaseFixtures())
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
@@ -750,7 +751,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("bubbles up during procedural test run") {
             val testCase = ProcedureTrilogyTestCase("", "",
-                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
+                    listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList(), TestFixtures())),
                     TestCaseFixtures())
             testSubjectCallerStub.exceptionToThrow = thrownException
 

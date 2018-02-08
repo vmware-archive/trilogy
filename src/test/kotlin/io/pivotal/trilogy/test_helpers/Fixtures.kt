@@ -3,6 +3,7 @@ package io.pivotal.trilogy.test_helpers
 import io.pivotal.trilogy.parsing.ProcedureStringTestCaseParser
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.TestArgumentTable
+import io.pivotal.trilogy.testcase.TestFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testcase.TrilogyTestCase
 
@@ -10,11 +11,11 @@ object Fixtures {
     val argumentTable = TestArgumentTable(listOf("IN", "OUT$"), listOf(listOf("1", "1")))
     val assertions = listOf(TrilogyAssertion("some description", "some SQL"))
     val testWithThreeRows: ProcedureTrilogyTest by lazy {
-        ProcedureTrilogyTest("", argumentTableWithThreeRows, emptyList())
+        ProcedureTrilogyTest("", argumentTableWithThreeRows, emptyList(), TestFixtures())
     }
 
     fun testWithThreeRowsAndAssertions(assertions: List<TrilogyAssertion>): ProcedureTrilogyTest {
-        return ProcedureTrilogyTest("", argumentTableWithThreeRows, assertions)
+        return ProcedureTrilogyTest("", argumentTableWithThreeRows, assertions, TestFixtures())
     }
 
     private val argumentTableWithThreeRows: TestArgumentTable
@@ -29,11 +30,11 @@ object Fixtures {
         return ProcedureStringTestCaseParser(ResourceHelper.getTestCaseByName(testCaseName)).getTestCase()
     }
 
-    fun buildSingleTest(): List<ProcedureTrilogyTest> = listOf(ProcedureTrilogyTest("I am a test", argumentTable, assertions))
+    fun buildSingleTest(): List<ProcedureTrilogyTest> = listOf(ProcedureTrilogyTest("I am a test", argumentTable, assertions, TestFixtures()))
 
     fun buildMultipleTests(): List<ProcedureTrilogyTest> = listOf(
-            ProcedureTrilogyTest("I am a test", argumentTable, assertions),
-            ProcedureTrilogyTest("I am also a test", argumentTable, assertions),
-            ProcedureTrilogyTest("Me three", argumentTable, assertions)
+            ProcedureTrilogyTest("I am a test", argumentTable, assertions, TestFixtures()),
+            ProcedureTrilogyTest("I am also a test", argumentTable, assertions, TestFixtures()),
+            ProcedureTrilogyTest("Me three", argumentTable, assertions, TestFixtures())
     )
 }

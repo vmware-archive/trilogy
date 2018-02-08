@@ -6,6 +6,7 @@ import io.pivotal.trilogy.parsing.exceptions.test.MissingDataSection
 import io.pivotal.trilogy.parsing.exceptions.test.MissingDescription
 import io.pivotal.trilogy.testcase.TestArgumentTable
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
+import io.pivotal.trilogy.testcase.TestFixtures
 
 class ProcedureStringTestParser(testBody: String) : BaseStringTestParser(testBody) {
     private val dataSectionHeader = "### DATA\\n"
@@ -18,7 +19,7 @@ class ProcedureStringTestParser(testBody: String) : BaseStringTestParser(testBod
     }
 
     override fun getTest(): ProcedureTrilogyTest {
-        return ProcedureTrilogyTest(description!!, parseArgumentTable(), parseAssertions())
+        return ProcedureTrilogyTest(description!!, parseArgumentTable(), parseAssertions(), TestFixtures())
     }
 
     private fun parseArgumentTable(): TestArgumentTable {
