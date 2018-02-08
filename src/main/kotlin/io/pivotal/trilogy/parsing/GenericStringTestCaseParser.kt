@@ -6,7 +6,7 @@ import io.pivotal.trilogy.parsing.exceptions.testcase.InvalidFormat
 import io.pivotal.trilogy.testcase.GenericTrilogyTest
 import io.pivotal.trilogy.testcase.GenericTrilogyTestCase
 import io.pivotal.trilogy.testcase.MalformedTrilogyTest
-import io.pivotal.trilogy.testcase.TestFixtures
+import io.pivotal.trilogy.testcase.TestCaseFixtures
 
 class GenericStringTestCaseParser(testCaseBody: String) : BaseStringTestCaseParser(testCaseBody) {
     init {
@@ -28,8 +28,8 @@ class GenericStringTestCaseParser(testCaseBody: String) : BaseStringTestCasePars
         }.filterNotNull()
     }
 
-    private fun parseTestHooks(): TestFixtures {
-        return TestFixtures(
+    private fun parseTestHooks(): TestCaseFixtures {
+        return TestCaseFixtures(
                 beforeEachTest = parseHookSection("BEFORE EACH TEST"),
                 afterEachTest = parseHookSection("AFTER EACH TEST"),
                 beforeAll = parseHookSection("BEFORE ALL"),

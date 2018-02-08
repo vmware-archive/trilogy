@@ -6,7 +6,7 @@ import io.pivotal.trilogy.reporting.TestResult
 import io.pivotal.trilogy.testcase.GenericTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
-import io.pivotal.trilogy.testcase.TestFixtures
+import io.pivotal.trilogy.testcase.TestCaseFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testcase.TrilogyTest
 import io.pivotal.trilogy.testcase.TrilogyTestCase
@@ -144,11 +144,11 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
         return if (this != null) getI18nMessage("output.errors.forRow", listOf(rowNumber, rowCount, this)) else null
     }
 
-    private fun TestFixtures.findMissingFixtures(library: FixtureLibrary): List<String> {
+    private fun TestCaseFixtures.findMissingFixtures(library: FixtureLibrary): List<String> {
         return this.findMissingSetupFixtures(library) + this.findMissingTeardownFixtures(library)
     }
 
-    private fun TestFixtures.findMissingSetupFixtures(library: FixtureLibrary): List<String> {
+    private fun TestCaseFixtures.findMissingSetupFixtures(library: FixtureLibrary): List<String> {
         return (this.beforeAll + this.beforeEachTest + this.beforeEachRow).map {
             try {
                 library.getSetupFixtureByName(it)
@@ -159,7 +159,7 @@ class DatabaseTestCaseRunner(private val testSubjectCaller: TestSubjectCaller,
         }.filterNotNull()
     }
 
-    private fun TestFixtures.findMissingTeardownFixtures(library: FixtureLibrary): List<String> {
+    private fun TestCaseFixtures.findMissingTeardownFixtures(library: FixtureLibrary): List<String> {
         return (this.afterAll + this.afterEachTest + this.afterEachRow).map {
             try {
                 library.getTeardownFixtureByName(it)

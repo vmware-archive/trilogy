@@ -7,7 +7,7 @@ import io.pivotal.trilogy.parsing.exceptions.testcase.TypeMismatch
 import io.pivotal.trilogy.testcase.MalformedTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
-import io.pivotal.trilogy.testcase.TestFixtures
+import io.pivotal.trilogy.testcase.TestCaseFixtures
 import io.pivotal.trilogy.testcase.TrilogyTestCase
 
 class ProcedureStringTestCaseParser(testCaseBody: String) : BaseStringTestCaseParser(testCaseBody) {
@@ -41,8 +41,8 @@ class ProcedureStringTestCaseParser(testCaseBody: String) : BaseStringTestCasePa
         return functionName
     }
 
-    private fun parseHooks(): TestFixtures {
-        return TestFixtures(
+    private fun parseHooks(): TestCaseFixtures {
+        return TestCaseFixtures(
                 beforeAll = parseHookSection("BEFORE ALL"),
                 beforeEachTest = parseHookSection("BEFORE EACH TEST"),
                 afterAll = parseHookSection("AFTER ALL"),

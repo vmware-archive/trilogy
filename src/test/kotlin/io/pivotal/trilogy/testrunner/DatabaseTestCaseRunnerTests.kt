@@ -13,7 +13,7 @@ import io.pivotal.trilogy.testcase.MalformedTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTest
 import io.pivotal.trilogy.testcase.ProcedureTrilogyTestCase
 import io.pivotal.trilogy.testcase.TestArgumentTable
-import io.pivotal.trilogy.testcase.TestFixtures
+import io.pivotal.trilogy.testcase.TestCaseFixtures
 import io.pivotal.trilogy.testcase.TrilogyAssertion
 import io.pivotal.trilogy.testproject.FixtureLibrary
 import io.pivotal.trilogy.testrunner.exceptions.FixtureLoadException
@@ -33,16 +33,16 @@ class DatabaseTestCaseRunnerTests : Spek({
     var scriptExecuterMock = ScriptExecuterMock()
     var assertionExecuterMock = AssertionExecuterMock(scriptExecuterMock)
     var testCaseRunner = DatabaseTestCaseRunner(testSubjectCallerStub, assertionExecuterMock, scriptExecuterMock)
-    val testCaseHooks = TestFixtures()
-    val hooksWithBeforeAll = TestFixtures(beforeAll = listOf("set client balance"))
-    val hooksWithBeforeAllAndBeforeEachTest = TestFixtures(beforeAll = listOf("set client balance"),
+    val testCaseHooks = TestCaseFixtures()
+    val hooksWithBeforeAll = TestCaseFixtures(beforeAll = listOf("set client balance"))
+    val hooksWithBeforeAllAndBeforeEachTest = TestCaseFixtures(beforeAll = listOf("set client balance"),
             beforeEachTest = listOf("Update client messages"))
-    val hooksWithBeforeEveryPossibleStep = TestFixtures(beforeAll = listOf("set client balance"),
+    val hooksWithBeforeEveryPossibleStep = TestCaseFixtures(beforeAll = listOf("set client balance"),
             beforeEachTest = listOf("Update client messages"), beforeEachRow = listOf("Update client balance"))
 
-    val hooksWithAfterEachRow = TestFixtures(afterEachRow = listOf("Clear client balance"))
-    val hooksWithAfterEachTest = TestFixtures(afterEachTest = listOf("Nowhere"))
-    val hooksWithAfterAll = TestFixtures(afterAll = listOf("Collision course"))
+    val hooksWithAfterEachRow = TestCaseFixtures(afterEachRow = listOf("Clear client balance"))
+    val hooksWithAfterEachTest = TestCaseFixtures(afterEachTest = listOf("Nowhere"))
+    val hooksWithAfterAll = TestCaseFixtures(afterAll = listOf("Collision course"))
 
     val firstSetupScript = "First setup script"
     val secondSetupScript = "Second setup script"
@@ -70,7 +70,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
     context("generic") {
         it("runs an empty test case") {
-            val testCase = GenericTrilogyTestCase("foo", emptyList(), TestFixtures())
+            val testCase = GenericTrilogyTestCase("foo", emptyList(), TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
             expect(0) { result.failed }
@@ -78,7 +78,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("includes the test case name in the result") {
-            val testCase = GenericTrilogyTestCase("Flying teapot", emptyList(), TestFixtures())
+            val testCase = GenericTrilogyTestCase("Flying teapot", emptyList(), TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
             expect("Flying teapot") { result.testCaseName }
@@ -86,14 +86,14 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("includes test names in the result") {
             val tests = listOf(GenericTrilogyTest("Mashing the pork butts", "test body", emptyList()))
-            val testCase = GenericTrilogyTestCase("", tests, TestFixtures())
+            val testCase = GenericTrilogyTestCase("", tests, TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
             expect("Mashing the pork butts") { result.tests.first().testName }
         }
 
         it("evaluates the body of the test") {
-            val testCase = GenericTrilogyTestCase("foo", listOf(GenericTrilogyTest("", "O, jolly desolation!", emptyList())), TestFixtures())
+            val testCase = GenericTrilogyTestCase("foo", listOf(GenericTrilogyTest("", "O, jolly desolation!", emptyList())), TestCaseFixtures())
             testCaseRunner.run(testCase, fixtureLibrary)
 
             expect(1) { scriptExecuterMock.executeCalls }
@@ -101,7 +101,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("reports a passing test") {
-            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList())), TestFixtures())
+            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList())), TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
             expect(1) { result.passed }
@@ -109,7 +109,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("reports a failing test on the test failure") {
-            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList())), TestFixtures())
+            val testCase = GenericTrilogyTestCase("o", listOf(GenericTrilogyTest("", "", emptyList())), TestCaseFixtures())
             scriptExecuterMock.shouldFailExecution = true
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
@@ -118,7 +118,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         }
 
         it("includes the error message in the test report") {
-            val testCase = GenericTrilogyTestCase("Why does the ship yell?..", listOf(GenericTrilogyTest("Caniss ire!", "oops!", emptyList())), TestFixtures())
+            val testCase = GenericTrilogyTestCase("Why does the ship yell?..", listOf(GenericTrilogyTest("Caniss ire!", "oops!", emptyList())), TestCaseFixtures())
             scriptExecuterMock.shouldFailExecution = true
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
@@ -128,7 +128,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         it("reports a failing test on the assertion failure") {
             val testWithAssertions = GenericTrilogyTest("", "", listOf(TrilogyAssertion("", "")))
             assertionExecuterMock.assertionExecutionErrorMessage = "an assertion failure"
-            val testCase = GenericTrilogyTestCase("o", listOf(testWithAssertions), TestFixtures())
+            val testCase = GenericTrilogyTestCase("o", listOf(testWithAssertions), TestCaseFixtures())
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
             expect(0) { result.passed }
@@ -137,7 +137,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
         it("reports a passing test on successful assertion") {
             val testWithAssertions = GenericTrilogyTest("", "", listOf(TrilogyAssertion("", "")))
-            val testCase = GenericTrilogyTestCase("o", listOf(testWithAssertions), TestFixtures())
+            val testCase = GenericTrilogyTestCase("o", listOf(testWithAssertions), TestCaseFixtures())
             assertionExecuterMock.assertionExecutionErrorMessage = null
             val result = testCaseRunner.run(testCase, fixtureLibrary)
 
@@ -162,7 +162,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("should run the setup script once") {
                 val beforeAll = listOf("Set client balance")
-                val hooks = TestFixtures(beforeAll = beforeAll)
+                val hooks = TestCaseFixtures(beforeAll = beforeAll)
                 val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", emptyList(), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -173,7 +173,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("runs the before all steps in order") {
                 val beforeAll = listOf("Set client balance", "UpdAte client Messages")
-                val hooks = TestFixtures(beforeAll = beforeAll)
+                val hooks = TestCaseFixtures(beforeAll = beforeAll)
                 val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", emptyList(), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -187,7 +187,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         context("with before each row specified") {
             it("should run the before each row script once for each row") {
                 val beforeEachRow = listOf("Set client balance")
-                val hooks = TestFixtures(beforeEachRow = beforeEachRow)
+                val hooks = TestCaseFixtures(beforeEachRow = beforeEachRow)
                 val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -196,7 +196,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("should run the before each row scripts in sequence") {
                 val beforeEachRow = listOf("Set client balance", "upDate client messages")
-                val hooks = TestFixtures(beforeEachRow = beforeEachRow)
+                val hooks = TestCaseFixtures(beforeEachRow = beforeEachRow)
                 val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -213,7 +213,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         context("with after each row scripts") {
             it("should run the script once for each row") {
                 val afterEachRow = listOf("Clear client balance")
-                val hooks = TestFixtures(afterEachRow = afterEachRow)
+                val hooks = TestCaseFixtures(afterEachRow = afterEachRow)
                 val testCase = ProcedureTrilogyTestCase("someProcedure", "someDescription", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -222,7 +222,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("should run the scripts in sequence") {
                 val afterEachRow = listOf("Clear Client BalaNce", "NOwhere")
-                val hooks = TestFixtures(afterEachRow = afterEachRow)
+                val hooks = TestCaseFixtures(afterEachRow = afterEachRow)
                 val testCase = ProcedureTrilogyTestCase("foo", "bar", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -239,7 +239,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         context("with after each test") {
             it("should run after each test") {
                 val afterEachTest = listOf("nowhere")
-                val hooks = TestFixtures(afterEachTest = afterEachTest)
+                val hooks = TestCaseFixtures(afterEachTest = afterEachTest)
                 val testCase = ProcedureTrilogyTestCase("foo", "bar", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -248,7 +248,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("should run each script in order") {
                 val afterEachTest = listOf("nowhere", "CLEAR client BALANCE")
-                val hooks = TestFixtures(afterEachTest = afterEachTest)
+                val hooks = TestCaseFixtures(afterEachTest = afterEachTest)
                 val testCase = ProcedureTrilogyTestCase("foo", "bar", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -262,7 +262,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         context("with after all") {
             it("should run after all") {
                 val afterAll = listOf("nowhere")
-                val hooks = TestFixtures(afterAll = afterAll)
+                val hooks = TestCaseFixtures(afterAll = afterAll)
                 val testCase = ProcedureTrilogyTestCase("foo", "bar", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -271,7 +271,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("should run each script in order") {
                 val afterAll = listOf("nowhere", "CLEAR client BALANCE")
-                val hooks = TestFixtures(afterAll = afterAll)
+                val hooks = TestCaseFixtures(afterAll = afterAll)
                 val testCase = ProcedureTrilogyTestCase("foo", "bar", listOf(Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -286,7 +286,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         context("with before each test") {
             it("should run the script once for each test") {
                 val beforeEachTest = listOf("set client balance")
-                val hooks = TestFixtures(beforeEachTest = beforeEachTest)
+                val hooks = TestCaseFixtures(beforeEachTest = beforeEachTest)
                 val testCase = ProcedureTrilogyTestCase("boo", "far", listOf(Fixtures.testWithThreeRows, Fixtures.testWithThreeRows), hooks)
 
                 testCaseRunner.run(testCase, fixtureLibrary)
@@ -301,7 +301,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("fails when a non-existing 'before all' fixture is specified") {
                 val missingFixtureName = "I influence this beauty, it's called neutral vision."
-                val hooks = TestFixtures(beforeAll = listOf(missingFixtureName))
+                val hooks = TestCaseFixtures(beforeAll = listOf(missingFixtureName))
                 val testCase = ProcedureTrilogyTestCase("some_procedure", "some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -315,7 +315,7 @@ class DatabaseTestCaseRunnerTests : Spek({
                 val fixture1 = "Jolly rogers scream with hunger at the golden tubbataha reef!"
                 val fixture2 = "http://imgs.xkcd.com/comics/gnome_ann_2x.png"
 
-                val hooks = TestFixtures(beforeAll = listOf(fixture1, fixture2))
+                val hooks = TestCaseFixtures(beforeAll = listOf(fixture1, fixture2))
                 val testCase = ProcedureTrilogyTestCase("SOME_PROCEDURE", "Some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -327,7 +327,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("fails when a non-existing 'before each test' fixture is specified") {
                 val missingFixtureName = "When the individual of politics believes the stigmas of the scholar, the sainthood will know self."
-                val hooks = TestFixtures(beforeEachTest = listOf(missingFixtureName))
+                val hooks = TestCaseFixtures(beforeEachTest = listOf(missingFixtureName))
                 val testCase = ProcedureTrilogyTestCase("some_procedure", "some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -339,7 +339,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("fails when a non-existing 'before each row' fixture is specified") {
                 val missingFixtureName = "Try smashing blood oranges ricotta rinseed with champaign."
-                val hooks = TestFixtures(beforeEachRow = listOf(missingFixtureName))
+                val hooks = TestCaseFixtures(beforeEachRow = listOf(missingFixtureName))
                 val testCase = ProcedureTrilogyTestCase("some_procedure", "some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -351,7 +351,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("fails when a non-existing 'after all' fixture is specified") {
                 val missingFixtureName = "Luna, danista, et fortis."
-                val hooks = TestFixtures(afterAll = listOf(missingFixtureName))
+                val hooks = TestCaseFixtures(afterAll = listOf(missingFixtureName))
                 val testCase = ProcedureTrilogyTestCase("some_procedure", "some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -363,7 +363,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("fails when a non-existing 'after each test' fixture is specified") {
                 val missingFixtureName = "The parasite yells mineral like an extraterrestrial mermaid."
-                val hooks = TestFixtures(afterEachTest = listOf(missingFixtureName))
+                val hooks = TestCaseFixtures(afterEachTest = listOf(missingFixtureName))
                 val testCase = ProcedureTrilogyTestCase("some_procedure", "some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -375,7 +375,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
             it("fails when a non-existing 'after each row' fixture is specified") {
                 val missingFixtureName = "Courage is an evil wind."
-                val hooks = TestFixtures(afterEachRow = listOf(missingFixtureName))
+                val hooks = TestCaseFixtures(afterEachRow = listOf(missingFixtureName))
                 val testCase = ProcedureTrilogyTestCase("some_procedure", "some description", tests, hooks)
 
                 val result = testCaseRunner.run(testCase, fixtureLibrary)
@@ -394,7 +394,7 @@ class DatabaseTestCaseRunnerTests : Spek({
                         "Be inner.",
                         "Ahoy, sunny treasure!"
                 )
-                val hooks = TestFixtures(beforeAll = listOf(missingFixtures[0]), beforeEachTest = listOf(missingFixtures[1]),
+                val hooks = TestCaseFixtures(beforeAll = listOf(missingFixtures[0]), beforeEachTest = listOf(missingFixtures[1]),
                         beforeEachRow = listOf(missingFixtures[2]), afterEachRow = listOf(missingFixtures[3]),
                         afterEachTest = listOf(missingFixtures[4]), afterAll = listOf(missingFixtures[5]))
                 val testCase = ProcedureTrilogyTestCase("Some_procedure", "Some description", tests, hooks)
@@ -480,7 +480,7 @@ class DatabaseTestCaseRunnerTests : Spek({
 
     context("procedural") {
         it("runs all the scripts in sync") {
-            val hooks = TestFixtures(
+            val hooks = TestCaseFixtures(
                     beforeAll = listOf("set client balance"),
                     beforeEachTest = listOf("update client messages"),
                     beforeEachRow = listOf("update client balance"),
@@ -701,7 +701,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         val thrownException = MalformedDatabaseURLException(".", SQLException("!"))
 
         it("bubbles up the exception during outer fixture load") {
-            val testCase = GenericTrilogyTestCase("", emptyList(), TestFixtures(beforeAll = listOf("set client balance")))
+            val testCase = GenericTrilogyTestCase("", emptyList(), TestCaseFixtures(beforeAll = listOf("set client balance")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
 
@@ -711,7 +711,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         it("bubbles up the exception during generic test fixture load") {
             val testCase = GenericTrilogyTestCase("",
                     listOf(GenericTrilogyTest("", "", emptyList())),
-                    TestFixtures(beforeEachTest = listOf("set client balance")))
+                    TestCaseFixtures(beforeEachTest = listOf("set client balance")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
 
@@ -721,7 +721,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         it("bubbles up the exception during procedural test fixture load") {
             val testCase = ProcedureTrilogyTestCase("", "",
                     listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
-                    TestFixtures(beforeEachTest = listOf("Update client messages")))
+                    TestCaseFixtures(beforeEachTest = listOf("Update client messages")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
 
@@ -731,7 +731,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         it("bubbles up during row fixture load") {
             val testCase = ProcedureTrilogyTestCase("", "",
                     listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
-                    TestFixtures(beforeEachRow = listOf("Update client messages")))
+                    TestCaseFixtures(beforeEachRow = listOf("Update client messages")))
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
 
@@ -741,7 +741,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         it("bubbles up during generic test run") {
             val testCase = GenericTrilogyTestCase("",
                     listOf(GenericTrilogyTest("neim", "statements", emptyList())),
-                    TestFixtures())
+                    TestCaseFixtures())
             scriptExecuterMock.shouldFailExecution = true
             scriptExecuterMock.failureException = thrownException
 
@@ -751,7 +751,7 @@ class DatabaseTestCaseRunnerTests : Spek({
         it("bubbles up during procedural test run") {
             val testCase = ProcedureTrilogyTestCase("", "",
                     listOf(ProcedureTrilogyTest("", TestArgumentTable(listOf("a"), listOf(listOf("b"))), emptyList())),
-                    TestFixtures())
+                    TestCaseFixtures())
             testSubjectCallerStub.exceptionToThrow = thrownException
 
             { testCaseRunner.run(testCase, fixtureLibrary) } shouldThrow MalformedDatabaseURLException::class
