@@ -1,8 +1,8 @@
 package io.pivotal.trilogy.parsing
 
 import io.pivotal.trilogy.i18n.MessageCreator.getI18nMessage
-import io.pivotal.trilogy.parsing.exceptions.test.MissingDescription
 import io.pivotal.trilogy.parsing.exceptions.test.MissingBody
+import io.pivotal.trilogy.parsing.exceptions.test.MissingDescription
 import io.pivotal.trilogy.testcase.GenericTrilogyTest
 import io.pivotal.trilogy.testcase.TestFixtures
 
@@ -27,7 +27,10 @@ class GenericStringTestParser(testBody: String) : BaseStringTestParser(testBody)
     }
 
     override fun getTest(): GenericTrilogyTest {
-        return GenericTrilogyTest(description!!.trim(), test!!.trim(), parseAssertions(), TestFixtures())
+        return GenericTrilogyTest(
+                description!!.trim(),
+                test!!.trim(), parseAssertions(),
+                TestFixtures(parseBeforeHooks(), parseAfterHooks()))
     }
 
     override fun validate() {

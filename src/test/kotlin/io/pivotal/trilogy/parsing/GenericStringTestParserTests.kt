@@ -33,6 +33,30 @@ class GenericStringTestParserTests : Spek({
 
     }
 
+    context("minimal with test hooks") {
+        val testString = ResourceHelper.getTestByName("genericMinimalWithTestHooks")
+
+        it("can be read") {
+            GenericStringTestParser(testString)
+        }
+
+        it("assigns before hook") {
+            expect(2) { GenericStringTestParser(testString).getTest().hooks.before.size }
+        }
+
+        it("sets before hook contents") {
+            expect("Sunt fluctuies acquirere secundus, germanus quadraes.") { GenericStringTestParser(testString).getTest().hooks.before.first() }
+            expect("Rhubarb combines greatly with delicious peanut butter.") { GenericStringTestParser(testString).getTest().hooks.before[1] }
+        }
+
+        it("assigns after hooks") {
+            expect(1) { GenericStringTestParser(testString).getTest().hooks.after.size }
+        }
+
+        it("sets after hook contents") {
+            expect("One magical death i give you: develop each other.") { GenericStringTestParser(testString).getTest().hooks.after.first() }
+        }
+    }
     context("with assertions") {
         val testString = ResourceHelper.getTestByName("genericWithAssertions")
 

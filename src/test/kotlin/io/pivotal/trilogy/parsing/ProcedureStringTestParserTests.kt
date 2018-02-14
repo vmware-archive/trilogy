@@ -56,6 +56,31 @@ class ProcedureStringTestParserTests : Spek({
         }
     }
 
+    context("minimal with test hooks") {
+        val testString = ResourceHelper.getTestByName("minimalWithTestHooks")
+
+        it("can be read") {
+            ProcedureStringTestParser(testString)
+        }
+
+        it("assigns before hook") {
+            expect(2) { ProcedureStringTestParser(testString).getTest().hooks.before.size }
+        }
+
+        it("sets before hook contents") {
+            expect("With peanut butter drink salad cream.") { ProcedureStringTestParser(testString).getTest().hooks.before.first() }
+            expect("Cadunt rare ducunt ad superbus historia.") { ProcedureStringTestParser(testString).getTest().hooks.before[1] }
+        }
+
+        it("assigns after hooks") {
+            expect(1) { ProcedureStringTestParser(testString).getTest().hooks.after.size }
+        }
+
+        it("sets after hook contents") {
+            expect("Bilge rats are the dubloons of the swashbuckling strength.") { ProcedureStringTestParser(testString).getTest().hooks.after.first() }
+        }
+    }
+
     context("with SQL assertion") {
         val testString = ResourceHelper.getTestByName("sqlAssertion")
         val sqlStatement = "DECLARE\n" +

@@ -4,5 +4,5 @@ data class ProcedureTrilogyTest(
         override val description: String,
         val argumentTable: TestArgumentTable,
         override val assertions: List<TrilogyAssertion>,
-        override val testFixtures: TestFixtures
+        override val hooks: TestFixtures
 ) : TrilogyTest

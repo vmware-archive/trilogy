@@ -26,10 +26,19 @@ abstract class BaseStringTestParser(val testBody: String) : TestParser {
 
     private fun parseAssertion(assertionString: String): TrilogyAssertion {
         val matches = Regex("```").split(assertionString).map(String::trim)
-        if (matches[0].isNullOrBlank())
+        if (matches[0].isBlank())
             throw MissingAssertionDescription(getI18nMessage("testParser.assertions.errors.missingDescription.message"), description!!.trim())
-        if ((matches.count() < 2) || (matches[1].isNullOrBlank()))
+        if ((matches.count() < 2) || (matches[1].isBlank()))
             throw MissingAssertionBody(getI18nMessage("testParser.assertions.errors.missingBody.message"), description!!.trim())
         return TrilogyAssertion(matches[0], matches[1])
+    }
+
+    protected fun parseBeforeHooks() = parseHooks("BEFORE")
+    protected fun parseAfterHooks() = parseHooks("AFTER")
+
+    private fun parseHooks(sectionName: String): List<String> {
+        val sectionRegex = Regex("### $sectionName\\s+- (.*?)(\n#|$)", RegexOption.DOT_MATCHES_ALL)
+        val section = sectionRegex.find(testBody)?.groups?.get(1)?.value
+        return section?.split("\n- ") ?: emptyList()
     }
 }
