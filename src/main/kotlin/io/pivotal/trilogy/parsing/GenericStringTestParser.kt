@@ -10,16 +10,14 @@ class GenericStringTestParser(testBody: String) : BaseStringTestParser(testBody)
 
     private val headerlessBody: String by lazy { testBody.replace(testHeaderRegex, "") }
 
-    private val testSection: String by lazy {
-        headerlessBody.replace(Regex("\\s*#+ [A-Z]{4,}.*", RegexOption.DOT_MATCHES_ALL), "").trim()
-    }
+    private val testSection: String by lazy { testBody.split("### ASSERTIONS", limit = 2).first()}
 
     private val test: String? by lazy {
         Regex("```(.+?)```", RegexOption.DOT_MATCHES_ALL).find(testSection)?.groupValues.orEmpty().getOrNull(1)
     }
 
     override val description: String? by lazy {
-        Regex("(.+?)```", RegexOption.DOT_MATCHES_ALL).find(headerlessBody)?.groupValues.orEmpty().getOrElse(1, { _ -> testSection })
+        Regex("(.+?)\n(###|```)", RegexOption.DOT_MATCHES_ALL).find(headerlessBody)?.groupValues.orEmpty().getOrElse(1, { _ -> headerlessBody })
     }
 
     init {

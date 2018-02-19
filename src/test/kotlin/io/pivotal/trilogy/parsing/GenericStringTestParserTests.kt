@@ -6,7 +6,9 @@ import io.pivotal.trilogy.parsing.exceptions.test.MissingBody
 import io.pivotal.trilogy.parsing.exceptions.test.MissingDescription
 import io.pivotal.trilogy.test_helpers.ResourceHelper
 import io.pivotal.trilogy.test_helpers.shouldContain
+import io.pivotal.trilogy.test_helpers.shouldNotThrow
 import io.pivotal.trilogy.test_helpers.shouldThrow
+import org.amshove.kluent.AnyException
 import org.jetbrains.spek.api.Spek
 import kotlin.test.expect
 
@@ -16,7 +18,7 @@ class GenericStringTestParserTests : Spek({
         val testString = ResourceHelper.getTestByName("genericMinimal")
 
         it("can be read") {
-            GenericStringTestParser(testString).getTest()
+            { GenericStringTestParser(testString).getTest() } shouldNotThrow AnyException
         }
 
         it("reads the test description") {
@@ -33,11 +35,63 @@ class GenericStringTestParserTests : Spek({
 
     }
 
+    context("minimal with SQL header") {
+        val testString = ResourceHelper.getTestByName("genericMinimalSql")
+
+        it("can be read") {
+            { GenericStringTestParser(testString).getTest() } shouldNotThrow AnyException
+        }
+
+        it("reads the test description") {
+            expect("Winds scream with halitosis!") { GenericStringTestParser(testString).getTest().description }
+        }
+
+        it("reads the test") {
+            expect("BEGIN\n  NULL;\nEND;") { GenericStringTestParser(testString).getTest().body }
+        }
+
+        it("reads the assertions") {
+            expect(0) { GenericStringTestParser(testString).getTest().assertions.size }
+        }
+    }
+
+    context("full test") {
+        val testString = ResourceHelper.getTestByName("genericWithTestHooks")
+
+        it("can be read") {
+            { GenericStringTestParser(testString).getTest() } shouldNotThrow AnyException
+        }
+
+        it("reads the test description") {
+            expect("You have to fail, and believe booda-hood by your growing.") { GenericStringTestParser(testString).getTest().description }
+        }
+
+        it("reads the test") {
+            expect("BEGIN\n  NULL;\nEND;") { GenericStringTestParser(testString).getTest().body }
+        }
+
+        it("reads the assertions") {
+            expect(3) { GenericStringTestParser(testString).getTest().assertions.size }
+        }
+
+        it("assigns the assertion contents") {
+            expect("With herrings drink fish sauce.\n  NOODLES;") { GenericStringTestParser(testString).getTest().assertions.first().body }
+        }
+    }
+
+    context("invalid test") {
+        val testString = ResourceHelper.getTestByName("genericInvalid")
+
+        it("can be read") {
+            { GenericStringTestParser(testString).getTest() } shouldThrow MissingBody::class
+        }
+    }
+
     context("minimal with test hooks") {
         val testString = ResourceHelper.getTestByName("genericMinimalWithTestHooks")
 
         it("can be read") {
-            GenericStringTestParser(testString)
+            { GenericStringTestParser(testString) } shouldNotThrow AnyException
         }
 
         it("assigns before hook") {
