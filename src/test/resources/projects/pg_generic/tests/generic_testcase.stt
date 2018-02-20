@@ -10,6 +10,7 @@ Generic test case example
 - Remove clients
 ## TEST
 This test should fail
+### SQL
 ```
 DO $$
   BEGIN
@@ -21,6 +22,7 @@ $$ language plpgsql;
 ```
 ## TEST
 This test should pass
+### SQL
 ```
 DO $$
   BEGIN
@@ -30,6 +32,7 @@ $$
 ```
 ## TEST
 And this test should pass
+### SQL
 ```
 DO $$
   BEGIN

@@ -10,6 +10,7 @@ Generic test case example
 - Remove clients
 ## TEST
 This test should fail
+### SQL
 ```
 BEGIN
   IF (1 <> 2) THEN
@@ -19,6 +20,7 @@ END;
 ```
 ## TEST
 This test should pass
+### SQL
 ```
 BEGIN
   NULL;
@@ -26,6 +28,7 @@ END;
 ```
 ## TEST
 And this test should pass
+### SQL
 ```
 BEGIN
   NULL;

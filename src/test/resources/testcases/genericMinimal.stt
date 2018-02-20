@@ -2,6 +2,7 @@
 Minimal generic test
 ## TEST
 This isn't really a test
+### SQL
 ```
 SELECT * FROM DUAL;
 ```

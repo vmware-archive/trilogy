@@ -1,6 +1,7 @@
 # TEST CASE
 Generic unnamed test and test without a body
 ## TEST
+### SQL
 ```
 BEGIN
   NULL;
@@ -10,6 +11,7 @@ END
 This test should fail
 ## TEST
 This test should be okay
+### SQL
 ```
 BEGIN
   NULL;

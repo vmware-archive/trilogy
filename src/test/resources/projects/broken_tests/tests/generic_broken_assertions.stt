@@ -2,6 +2,7 @@
 Generic tests with broken assertions
 ## TEST
 Has an unnamed assertion
+### SQL
 ```
 BEGIN
   NULL;
@@ -16,6 +17,7 @@ NULL;
 ```
 ## TEST
 Has an assertion with an empty body
+### SQL
 ```
 BEGIN
   NULL;
@@ -30,6 +32,7 @@ Fußball über alles!
 ```
 ## TEST
 Has an assertion without a body block
+### SQL
 ```
 BEGIN
   NULL;
@@ -40,6 +43,7 @@ END;
 Studere cito ducunt ad primus mens.
 ## TEST
 This test should be okay
+### SQL
 ```
 BEGIN
   NULL;

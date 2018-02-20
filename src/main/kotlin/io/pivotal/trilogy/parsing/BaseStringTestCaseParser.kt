@@ -6,7 +6,7 @@ import io.pivotal.trilogy.testcase.TestCaseParser
 
 abstract class BaseStringTestCaseParser(val testCaseBody: String) : TestCaseParser {
 
-    open protected val testCaseHeaderRegex = Regex("^# TEST CASE")
+    protected open val testCaseHeaderRegex = Regex("^# TEST CASE")
     protected val testStrings: List<String> by lazy {
         testCaseBody.split("## TEST").drop(1).map { "## TEST$it".trim() }
     }

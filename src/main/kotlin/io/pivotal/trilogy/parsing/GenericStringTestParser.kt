@@ -17,7 +17,7 @@ class GenericStringTestParser(testBody: String) : BaseStringTestParser(testBody)
     }
 
     override val description: String? by lazy {
-        Regex("(.+?)\n(###|```)", RegexOption.DOT_MATCHES_ALL).find(headerlessBody)?.groupValues.orEmpty().getOrElse(1, { _ -> headerlessBody })
+        Regex("(###|```).*", RegexOption.DOT_MATCHES_ALL).replace(headerlessBody, "").trim()
     }
 
     init {
@@ -33,7 +33,7 @@ class GenericStringTestParser(testBody: String) : BaseStringTestParser(testBody)
 
     override fun validate() {
         super.validate()
-        if (description == null || description!!.contains(Regex("\\A\\s*```")))
+        if (description == null || description!!.isEmpty())
             throw MissingDescription(
                     getI18nMessage("testParser.generic.errors.missingDescription.message"),
                     getI18nMessage("testParser.generic.errors.missingDescription.testName")

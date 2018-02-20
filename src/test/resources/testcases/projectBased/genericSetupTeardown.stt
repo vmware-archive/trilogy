@@ -16,6 +16,7 @@ Example
 - Fraticinidas ire
 ## TEST
 Output should echo the input
+### SQL
 ```
 BEGIN
   NULL;
@@ -23,6 +24,7 @@ END;
 ```
 ## TEST
 Contains a syntax error
+### SQL
 ```
 BEGIN
   NUKLL;
