@@ -31,6 +31,7 @@ The generic test case allows the developer to use a set of plain SQL statements 
 <test case description>
 ## TEST
 <test description>
+### SQL
 ```< SQL  statements >```
 ### ASSERTIONS
 #### SQL
