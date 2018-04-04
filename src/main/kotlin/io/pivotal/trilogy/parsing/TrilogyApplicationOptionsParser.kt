@@ -12,11 +12,12 @@ object TrilogyApplicationOptionsParser {
         val options = Options().apply {
             addOption("", "project", true, "Path to the test project directory")
             addOption("", "skip_schema_load", false, "Use this flag to skip loading schema from the project")
+            addOption("h", "help", false, "Display application usage")
         }
         val command = try {
             DefaultParser().parse(options, arguments.filter { it.isValidOption }.toTypedArray())
         } catch (e: ParseException) {
-            System.out.println(e.message)
+            println(e.message)
             throw e
         }
 
@@ -24,26 +25,26 @@ object TrilogyApplicationOptionsParser {
     }
 
     private fun trilogyApplicationOptions(command: CommandLine): TrilogyApplicationOptions {
-        val applicationOptions = if (command.args.any())
+        return if (command.args.any())
             testCaseApplicationOptions(command)
         else
             testProjectApplicationOptions(command)
-
-        return applicationOptions
     }
 
     private fun testProjectApplicationOptions(command: CommandLine): TrilogyApplicationOptions {
         val testProjectPath = command.getOptionValue("project") ?: ""
         val shouldSkipSchema = command.hasOption("skip_schema_load")
-        return TrilogyApplicationOptions(testProjectPath = testProjectPath, shouldSkipSchema = shouldSkipSchema)
+        val shouldDisplayHelp = command.hasOption("help")
+        return TrilogyApplicationOptions(testProjectPath = testProjectPath, shouldSkipSchema = shouldSkipSchema, shouldDisplayHelp = shouldDisplayHelp)
     }
 
     private fun testCaseApplicationOptions(command: CommandLine): TrilogyApplicationOptions {
-        return TrilogyApplicationOptions(testCaseFilePath = command.args.first())
+        val shouldDisplayHelp = command.hasOption("help")
+        return TrilogyApplicationOptions(testCaseFilePath = command.args.first(), shouldDisplayHelp = shouldDisplayHelp)
     }
 
     private val String.isValidOption: Boolean get() {
-        val validOptions = listOf("--project=", "--skip_schema_load")
+        val validOptions = listOf("--project=", "--skip_schema_load", "--help")
         return this.startsWith("--").not() || validOptions.any { this.startsWith(it) }
     }
 

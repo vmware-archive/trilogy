@@ -118,3 +118,9 @@ run_test_case() {
   [[ "$status" -eq 1 ]]
   [[ "$output" =~ "[FAIL] Unable to load the driver for URL jdbc:mysql://host1:33060/sakila. Please make sure the URL is correct, and the appropriate JDBC driver is installed." ]]
 }
+
+@test "invoking help should result in a zero exit code" {
+  run java -jar "$(trilogy)" --help
+  [[ "$output" =~ "Usage" ]]
+  [[ "$status" -eq 0 ]]
+}

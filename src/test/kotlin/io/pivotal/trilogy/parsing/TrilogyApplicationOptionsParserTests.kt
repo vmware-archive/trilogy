@@ -40,4 +40,19 @@ class TrilogyApplicationOptionsParserTests : Spek({
         expect(true) { options.shouldSkipSchema }
     }
 
+    it("sets the help option to false by default") {
+        val options = TrilogyApplicationOptionsParser.parse(arrayOf("--db_url=foo"))
+        expect(false) { options.shouldDisplayHelp }
+    }
+
+    it("fetches the display help option") {
+        val options = TrilogyApplicationOptionsParser.parse(arrayOf("--help"))
+        expect(true) { options.shouldDisplayHelp }
+    }
+
+    it("fetches the display help option for non-project invocation") {
+        val options = TrilogyApplicationOptionsParser.parse(arrayOf("something.stt", "-h"))
+        expect(true) { options.shouldDisplayHelp }
+    }
+
 })

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.stereotype.Component
+import kotlin.system.exitProcess
 
 @Component
 open class TrilogyApplicationRunner : ApplicationRunner {
@@ -19,9 +20,11 @@ open class TrilogyApplicationRunner : ApplicationRunner {
         if (args != null) {
             try {
                 val applicationOptions = TrilogyApplicationOptionsParser.parse(args.sourceArgs)
+                displayHelpAndExitIfNeeded(applicationOptions)
+
                 val projectResult = trilogyController.run(applicationOptions)
                 val output = TestCaseReporter.generateReport(projectResult)
-                System.out.println(output)
+                println(output)
 
                 if (projectResult.hasFailed) {
                     suppressStacktrace = true
@@ -37,10 +40,21 @@ open class TrilogyApplicationRunner : ApplicationRunner {
         }
     }
 
+    private fun displayHelpAndExitIfNeeded(applicationOptions: TrilogyApplicationOptions) {
+        if (applicationOptions.shouldDisplayHelp) {
+            printUsage()
+            exitProcess(0)
+        }
+    }
+
     private fun printFailure(e: Throwable?) {
         println("$e")
         e?.stackTrace?.forEach(::println)
-        System.out.println(getI18nMessage("applicationUsage"))
+        printUsage()
+    }
+
+    private fun printUsage() {
+        println(getI18nMessage("applicationUsage"))
     }
 }
 

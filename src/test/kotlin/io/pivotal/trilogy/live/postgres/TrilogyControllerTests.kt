@@ -28,7 +28,7 @@ class TrilogyControllerTests : Spek({
 
     it("errors correctly when an incorrect user is given") {
         val controller = bootTrilogyController("steve")
-        val options = TrilogyApplicationOptions(testProjectPath = "src/test/resources/projects/pg_generic")
+        val options = TrilogyApplicationOptions(testProjectPath = "src/test/resources/projects/pg_generic", shouldDisplayHelp = false)
 
         val testProjectResult = controller.run(options)
 
@@ -37,7 +37,7 @@ class TrilogyControllerTests : Spek({
 
     it("succeeds when the connection options are okay") {
         val controller = bootTrilogyController("app_user")
-        val options = TrilogyApplicationOptions(testProjectPath = "src/test/resources/projects/pg_generic")
+        val options = TrilogyApplicationOptions(testProjectPath = "src/test/resources/projects/pg_generic", shouldDisplayHelp = false)
 
         val testProjectResult = controller.run(options)
 

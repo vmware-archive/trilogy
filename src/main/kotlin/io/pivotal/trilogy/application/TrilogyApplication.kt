@@ -11,12 +11,12 @@ import java.net.ConnectException
 @Import(TrilogyApplicationConfiguration::class)
 open class TrilogyApplication {
 
-
     companion object {
-        @JvmStatic fun main(args: Array<String>) {
+        @JvmStatic
+        fun main(args: Array<String>) {
             try {
                 SpringApplication.run(TrilogyApplication::class.java, *args)
-            } catch(e: IllegalStateException) {
+            } catch (e: IllegalStateException) {
                 if (e.isCausedByConnectionFault) {
                     println(getI18nMessage("connectionFailure", listOf("${e.cause}")))
                 }
@@ -27,11 +27,11 @@ open class TrilogyApplication {
             }
         }
 
-        private val Throwable.isCausedByConnectionFault: Boolean get() {
-            return (this.cause?.cause is ConnectException) or (this.cause?.cause?.cause is ConnectException)
-        }
     }
 
 }
 
-
+private val Throwable.isCausedByConnectionFault: Boolean
+    get() {
+        return (this.cause?.cause is ConnectException) or (this.cause?.cause?.cause is ConnectException)
+    }
