@@ -2,19 +2,27 @@
 
 Trilogy is a tool for testing server-side database logic. Test cases are represented by plain text files utilizing markdown format, which makes them easy to read and edit.
 ## Requirements
-- JRE 1.7 or later installed
+- JRE 1.7 or 1.8 installed
 - JDBC driver for the database under test available on the classpath.
 
+## Installation
+
+Grab the latest release file for your platform on the [github releases page](https://github.com/pivotal/trilogy/releases).
+For example, `trilogy-0.3.1-mac-linux.tgz`. Unpack the archive to a folder, and optionally add that folder to the `PATH`.
+
 ## Command-line options
+
+The following examples assume that the folder containing the trilogy executable was added to the `PATH`.
+ 
 - Single test case run:
     ```
-    $ java -jar trilogy.jar <filename> [--db_url=<JDBC url>] [--db_user=<username>] [--db_password=<password>]
+    $ trilogy <filename> [--db_url=<JDBC url>] [--db_user=<username>] [--db_password=<password>]
     ```
     where `filename` is path to the `.stt` test file
 
 - Project run:
     ```
-    $ java -jar trilogy.jar --project=<path to project> [--db_url=<JDBC url>] [--db_user=<username>] [--db_password=<password>] [--skip_schema_load]
+    $ trilogy --project=<path to project> [--db_url=<JDBC url>] [--db_user=<username>] [--db_password=<password>] [--skip_schema_load]
     ```
     add the `skip_schema_load` flag to indicate that the `tests/fixtures/schema.sql` should not be loaded if it is present in the project.
 
