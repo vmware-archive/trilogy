@@ -8,9 +8,9 @@ import java.net.URL
 
 class UrlTestCaseResourceLocator(url: URL) : TestProjectResourceLocator {
     init {
-        if (! File(url.path).isFile) throw TestCaseNotFound(MessageCreator.getI18nMessage("testCaseRunner.errors.testCaseNotFound", listOf(url.path)))
-
         if (url.isInvalid) throw InvalidTestCaseName(MessageCreator.getI18nMessage("testCaseRunner.errors.invalidTestCaseName", listOf(url.path)))
+
+        if (! File(url.path).isFile) throw TestCaseNotFound(MessageCreator.getI18nMessage("testCaseRunner.errors.testCaseNotFound", listOf(url.path)))
     }
     override val testCases = listOf(TestCaseResource(url.path ,url.textContent)).sortedBy { it.path }
 
