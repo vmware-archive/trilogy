@@ -120,7 +120,6 @@ run_test_case() {
 }
 
 @test "invoking help should result in a zero exit code" {
-  run java -jar "$(trilogy)" --help
+  java -jar "$(trilogy)" --help
   [[ "$output" =~ "Usage" ]]
-  [[ "$status" -eq 0 ]]
 }
